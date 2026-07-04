@@ -1,0 +1,130 @@
+// ============================================
+// ADICIONAR AO FINAL DO schema.prisma EXISTENTE
+// ============================================
+
+// ==================== NOVOS ENUMS ====================
+
+enum TenantStatus {
+  ACTIVE
+  SUSPENDED
+  TRIAL
+  CANCELLED
+}
+
+// ==================== NOVOS MODELS ====================
+
+model Tenant {
+  id                        String          @id @default(cuid())
+  slug                      String          @unique
+  name                      String
+  status                    TenantStatus    @default(TRIAL)
+  subscriptionExpiresAt     DateTime?       @map("subscription_expires_at")
+  maxUsers                  Int             @default(10) @map("max_users")
+  maxComplaintsPerMonth     Int             @default(100) @map("max_complaints_per_month")
+  createdAt                 DateTime        @default(now()) @map("created_at")
+  updatedAt                 DateTime        @updatedAt @map("updated_at")
+  isActive                  Boolean         @default(true) @map("is_active")
+  
+  branding                  TenantBranding?
+  users                     User[]
+  complaints                Complaint[]
+  attachments               Attachment[]
+  comments                  ComplaintComment[]
+  dossiers                  Dossier[]
+  notifications             Notification[]
+  auditLogs                 AuditLog[]
+
+  @@map("tenants")
+}
+
+model TenantBranding {
+  id                    String   @id @default(cuid())
+  tenantId              String   @unique @map("tenant_id")
+  companyName           String   @map("company_name")
+  primaryColor          String   @default("#3b82f6") @map("primary_color")
+  secondaryColor        String   @default("#f59e0b") @map("secondary_color")
+  logoUrl               String?  @map("logo_url")
+  faviconUrl            String?  @map("favicon_url")
+  loginBackgroundUrl    String?  @map("login_background_url")
+  customCss             String?  @map("custom_css")
+  createdAt             DateTime @default(now()) @map("created_at")
+  updatedAt             DateTime @updatedAt @map("updated_at")
+  
+  tenant                Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@map("tenant_branding")
+}
+
+// ==================== ATUALIZAÇÕES NOS MODELS EXISTENTES ====================
+
+// ADICIONAR SUPER_ADMIN ao enum UserRole existente:
+/*
+enum UserRole {
+  PUBLIC
+  REPORTER
+  INVESTIGATOR
+  ADMIN
+  AUDITOR
+  SUPER_ADMIN  // << ADICIONAR ESTA LINHA
+}
+*/
+
+// ADICIONAR tenantId aos models existentes:
+
+/*
+model User {
+  // ... campos existentes ...
+  tenantId                 String?           @map("tenant_id")  // << ADICIONAR
+  tenant                   Tenant?           @relation(fields: [tenantId], references: [id], onDelete: Cascade)  // << ADICIONAR
+
+  @@index([tenantId])  // << ADICIONAR
+}
+
+model Complaint {
+  // ... campos existentes ...
+  tenantId                String?           @map("tenant_id")  // << ADICIONAR
+  tenant                  Tenant?           @relation(fields: [tenantId], references: [id], onDelete: Cascade)  // << ADICIONAR
+
+  @@index([tenantId])  // << ADICIONAR
+}
+
+model Attachment {
+  // ... campos existentes ...
+  tenantId                String?           @map("tenant_id")  // << ADICIONAR
+  tenant                  Tenant?           @relation(fields: [tenantId], references: [id], onDelete: Cascade)  // << ADICIONAR
+
+  @@index([tenantId])  // << ADICIONAR
+}
+
+model ComplaintComment {
+  // ... campos existentes ...
+  tenantId                String?           @map("tenant_id")  // << ADICIONAR
+  tenant                  Tenant?           @relation(fields: [tenantId], references: [id], onDelete: Cascade)  // << ADICIONAR
+
+  @@index([tenantId])  // << ADICIONAR
+}
+
+model Dossier {
+  // ... campos existentes ...
+  tenantId                String?           @map("tenant_id")  // << ADICIONAR
+  tenant                  Tenant?           @relation(fields: [tenantId], references: [id], onDelete: Cascade)  // << ADICIONAR
+
+  @@index([tenantId])  // << ADICIONAR
+}
+
+model Notification {
+  // ... campos existentes ...
+  tenantId                String?           @map("tenant_id")  // << ADICIONAR
+  tenant                  Tenant?           @relation(fields: [tenantId], references: [id], onDelete: Cascade)  // << ADICIONAR
+
+  @@index([tenantId])  // << ADICIONAR
+}
+
+model AuditLog {
+  // ... campos existentes ...
+  tenantId                String?           @map("tenant_id")  // << ADICIONAR
+  tenant                  Tenant?           @relation(fields: [tenantId], references: [id], onDelete: Cascade)  // << ADICIONAR
+
+  @@index([tenantId])  // << ADICIONAR
+}
+*/

@@ -1,0 +1,202 @@
+version: '3.8'
+
+# ====================================
+# DEVELOPMENT ENVIRONMENT
+# ====================================
+services:
+  # ====================================
+  # PostgreSQL - Banco Principal
+  # ====================================
+  postgres:
+    image: postgres:16-alpine
+    container_name: canal-denuncia-postgres
+    environment:
+      POSTGRES_USER: denuncia_user
+      POSTGRES_PASSWORD: secure_password
+      POSTGRES_DB: canal_denuncia
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U denuncia_user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - canal-denuncia-network
+
+  # ====================================
+  # MongoDB - Documentos e Evidências
+  # ====================================
+  mongodb:
+    image: mongo:7
+    container_name: canal-denuncia-mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: denuncia_user
+      MONGO_INITDB_ROOT_PASSWORD: secure_password
+      MONGO_INITDB_DATABASE: canal_denuncia_docs
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - canal-denuncia-network
+
+  # ====================================
+  # RabbitMQ - Mensageria
+  # ====================================
+  rabbitmq:
+    image: rabbitmq:3.12-management-alpine
+    container_name: canal-denuncia-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: denuncia_user
+      RABBITMQ_DEFAULT_PASS: secure_password
+    ports:
+      - "5672:5672"   # AMQP
+      - "15672:15672" # Management UI
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - canal-denuncia-network
+
+  # ====================================
+  # Elasticsearch - Logs & Auditoria
+  # ====================================
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: canal-denuncia-elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - canal-denuncia-network
+
+  # ====================================
+  # Kibana - Visualização de Logs
+  # ====================================
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.11.0
+    container_name: canal-denuncia-kibana
+    environment:
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+    ports:
+      - "5601:5601"
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:5601/api/status || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - canal-denuncia-network
+
+  # ====================================
+  # Backend API (NestJS)
+  # ====================================
+  backend:
+    build:
+      context: .
+      dockerfile: apps/backend/Dockerfile
+    container_name: canal-denuncia-backend
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      DATABASE_URL: postgresql://denuncia_user:secure_password@postgres:5432/canal_denuncia?schema=public
+      MONGODB_URI: mongodb://denuncia_user:secure_password@mongodb:27017/canal_denuncia_docs
+      RABBITMQ_URI: amqp://denuncia_user:secure_password@rabbitmq:5672
+      ELASTICSEARCH_NODE: http://elasticsearch:9200
+      JWT_SECRET: dev-jwt-secret-change-in-production-minimum-32-chars
+      JWT_REFRESH_SECRET: dev-refresh-secret-change-in-production-minimum-32-chars
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./apps/backend:/app/apps/backend
+      - /app/apps/backend/node_modules
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+    command: npm run dev
+    networks:
+      - canal-denuncia-network
+
+  # ====================================
+  # LocalStack - AWS S3 Local
+  # ====================================
+  localstack:
+    image: localstack/localstack:latest
+    container_name: canal-denuncia-localstack
+    ports:
+      - "4566:4566"  # Gateway único para todos os serviços
+      - "4510-4559:4510-4559"  # Portas para serviços externos
+    environment:
+      - SERVICES=s3
+      - DEBUG=1
+      - DATA_DIR=/tmp/localstack/data
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_DEFAULT_REGION=us-east-1
+    volumes:
+      - "./tmp/localstack:/tmp/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4566/_localstack/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - canal-denuncia-network
+
+  # ====================================
+  # Adminer - DB Management UI (opcional)
+  # ====================================
+  adminer:
+    image: adminer:latest
+    container_name: canal-denuncia-adminer
+    ports:
+      - "8080:8080"
+    environment:
+      ADMINER_DEFAULT_SERVER: postgres
+    depends_on:
+      - postgres
+    networks:
+      - canal-denuncia-network
+
+volumes:
+  postgres_data:
+  mongo_data:
+  rabbitmq_data:
+  elasticsearch_data:
+
+networks:
+  canal-denuncia-network:
+    driver: bridge

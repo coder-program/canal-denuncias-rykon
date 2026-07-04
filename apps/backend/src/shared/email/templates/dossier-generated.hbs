@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head><meta charset="UTF-8"><title>Dossiê Gerado</title>
+<style>body{font-family:Arial,sans-serif;line-height:1.6;color:#333;background:#f4f4f4;margin:0;padding:0}.container{max-width:600px;margin:20px auto;background:#fff;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,.1)}.header{background:linear-gradient(135deg,#0066CC,#004D99);color:#fff;padding:30px;text-align:center}.content{padding:30px}.button{display:inline-block;background:#0066CC;color:#fff!important;text-decoration:none;padding:12px 30px;border-radius:6px;margin:20px 0;font-weight:600}.footer{background:#f8f9fa;padding:20px;text-align:center;font-size:12px;color:#666}.footer a{color:#0066CC;text-decoration:none}.success-box{background:#E8F5E9;border-left:4px solid #008000;padding:15px;margin:20px 0;border-radius:4px}</style>
+</head>
+<body>
+<div class="container">
+<div class="header"><h1>{{appName}}</h1></div>
+<div class="content">
+<h2>📦 Dossiê Gerado</h2>
+<p>O dossiê da denúncia <strong>{{protocol}}</strong> foi gerado e está disponível para download.</p>
+<div class="success-box">
+<p><strong>Denúncia:</strong> {{title}}</p>
+<p><strong>Gerado por:</strong> {{generatedBy}}</p>
+<p><strong>Data:</strong> {{formatDate generatedAt}}</p>
+</div>
+<center><a href="{{downloadUrl}}" class="button">Baixar Dossiê</a></center>
+<p style="font-size:14px;color:#666;margin-top:30px">
+<strong>⚠️ Atenção:</strong> O link de download expira em 24 horas por motivos de segurança.
+</p>
+</div>
+<div class="footer">
+<p><strong>{{appName}}</strong></p>
+<p><a href="{{appUrl}}">Acessar Sistema</a> | <a href="mailto:{{supportEmail}}">Suporte</a></p>
+<p>&copy; {{year}} {{appName}}.</p>
+</div>
+</div>
+</body>
+</html>

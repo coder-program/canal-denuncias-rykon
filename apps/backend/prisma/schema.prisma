@@ -1,0 +1,310 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Attachment {
+  id                                   String     @id @default(cuid())
+  complaintId                          String     @map("complaint_id")
+  filename                             String
+  mimeType                             String     @map("mime_type")
+  size                                 Int
+  s3Key                                String     @map("s3_key")
+  s3Bucket                             String     @map("s3_bucket")
+  sha256Hash                           String     @map("sha256_hash")
+  uploadedBy                           String     @map("uploaded_by")
+  uploadedAt                           DateTime   @default(now()) @map("uploaded_at")
+  deletedAt                            DateTime?  @map("deleted_at")
+  deletedBy                            String?    @map("deleted_by")
+  complaint                            Complaint  @relation(fields: [complaintId], references: [id], onDelete: Cascade)
+  uploaderUser                         User       @relation("attachments_uploaded_byTousers", fields: [uploadedBy], references: [id])
+  deleterUser                          User?      @relation("attachments_deleted_byTousers", fields: [deletedBy], references: [id])
+
+  @@index([complaintId])
+  @@index([deletedAt])
+  @@index([uploadedBy])
+  @@map("attachments")
+}
+
+model AuditLog {
+  id          String      @id @default(cuid())
+  userId      String?     @map("user_id")
+  action      AuditAction
+  resource    String
+  resourceId  String?     @map("resource_id")
+  details     Json?
+  ipAddress   String?     @map("ip_address")
+  userAgent   String?     @map("user_agent")
+  timestamp   DateTime    @default(now())
+  user        User?       @relation(fields: [userId], references: [id])
+
+  @@index([action])
+  @@index([resource, resourceId])
+  @@index([timestamp])
+  @@index([userId])
+  @@map("audit_logs")
+}
+
+model ComplaintStatusHistory {
+  id              String           @id @default(cuid())
+  complaintId     String           @map("complaint_id")
+  previousStatus  ComplaintStatus? @map("previous_status")
+  newStatus       ComplaintStatus  @map("new_status")
+  changedBy       String?          @map("changed_by")
+  reason          String?
+  createdAt       DateTime         @default(now()) @map("created_at")
+  complaint       Complaint        @relation(fields: [complaintId], references: [id], onDelete: Cascade)
+
+  @@index([complaintId])
+  @@map("complaint_status_history")
+}
+
+model Complaint {
+  id                      String                     @id @default(cuid())
+  protocol                String                     @unique
+  isAnonymous             Boolean                    @default(false) @map("is_anonymous")
+  reporterEmail           String?                    @map("reporter_email")
+  reporterPhone           String?                    @map("reporter_phone")
+  type                    ComplaintType
+  priority                ComplaintPriority          @default(MEDIUM)
+  status                  ComplaintStatus            @default(PENDING)
+  title                   String
+  description             String
+  department              String?
+  location                String?
+  incidentDate            DateTime?                  @map("incident_date")
+  involvedPeople          String[]                   @map("involved_people")
+  witnesses               String[]                   @default([])
+  metadata                Json?
+  investigatorId          String?                    @map("investigator_id")
+  investigationNotes      String?                    @map("investigation_notes")
+  resolutionNotes         String?                    @map("resolution_notes")
+  resolvedAt              DateTime?                  @map("resolved_at")
+  createdBy               String?                    @map("created_by")
+  createdAt               DateTime                   @default(now()) @map("created_at")
+  updatedAt               DateTime                   @updatedAt @map("updated_at")
+  integrityHash           String?                    @map("integrity_hash")
+  attachments             Attachment[]
+  statusHistory           ComplaintStatusHistory[]
+  comments                ComplaintComment[]
+  creator                 User?                      @relation("complaints_created_byTousers", fields: [createdBy], references: [id])
+  investigator            User?                      @relation("complaints_investigator_idTousers", fields: [investigatorId], references: [id])
+  dossiers                Dossier[]
+
+  @@index([createdAt])
+  @@index([investigatorId])
+  @@index([protocol])
+  @@index([status])
+  @@map("complaints")
+}
+
+model ComplaintComment {
+  id          String    @id @default(cuid())
+  complaintId String    @map("complaint_id")
+  authorId    String    @map("author_id")
+  content     String    @db.Text
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  complaint   Complaint @relation(fields: [complaintId], references: [id], onDelete: Cascade)
+  author      User      @relation(fields: [authorId], references: [id])
+
+  @@index([complaintId])
+  @@index([authorId])
+  @@index([createdAt])
+  @@map("complaint_comments")
+}
+
+model Dossier {
+  id           String     @id @default(cuid())
+  complaintId  String     @map("complaint_id")
+  title        String
+  summary      String
+  generatedBy  String     @map("generated_by")
+  generatedAt  DateTime   @default(now()) @map("generated_at")
+  s3PdfKey     String?    @map("s3_pdf_key")
+  s3ZipKey     String?    @map("s3_zip_key")
+  complaint    Complaint  @relation(fields: [complaintId], references: [id], onDelete: Cascade)
+  generator    User       @relation(fields: [generatedBy], references: [id])
+
+  @@index([complaintId])
+  @@map("dossiers")
+}
+
+model Notification {
+  id           String              @id @default(cuid())
+  userId       String              @map("user_id")
+  type         NotificationType
+  channel      NotificationChannel
+  title        String
+  message      String
+  data         Json?
+  relatedId    String?             @map("related_id")
+  relatedType  String?             @map("related_type")
+  isRead       Boolean             @default(false) @map("is_read")
+  readAt       DateTime?           @map("read_at")
+  sentAt       DateTime?           @map("sent_at")
+  emailSent    Boolean             @default(false) @map("email_sent")
+  emailSentAt  DateTime?           @map("email_sent_at")
+  emailError   String?             @map("email_error")
+  createdAt    DateTime            @default(now()) @map("created_at")
+  user         User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([type])
+  @@index([userId, createdAt])
+  @@index([userId, isRead])
+  @@map("notifications")
+}
+
+model RefreshToken {
+  id         String   @id @default(cuid())
+  token      String   @unique
+  userId     String   @map("user_id")
+  expiresAt  DateTime @map("expires_at")
+  isRevoked  Boolean  @default(false) @map("is_revoked")
+  createdAt  DateTime @default(now()) @map("created_at")
+  ipAddress  String?  @map("ip_address")
+  userAgent  String?  @map("user_agent")
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("refresh_tokens")
+}
+
+model SystemSetting {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  value       String
+  description String?
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  updatedBy   String?  @map("updated_by")
+
+  @@map("system_settings")
+}
+
+model UserPreferences {
+  id                            String   @id @default(cuid())
+  userId                        String   @unique @map("user_id")
+  emailNotifications            Boolean  @default(true) @map("email_notifications")
+  emailComplaintCreated         Boolean  @default(true) @map("email_complaint_created")
+  emailComplaintAssigned        Boolean  @default(true) @map("email_complaint_assigned")
+  emailComplaintStatusChanged   Boolean  @default(true) @map("email_complaint_status_changed")
+  emailComplaintComment         Boolean  @default(true) @map("email_complaint_comment")
+  emailAttachmentUploaded       Boolean  @default(true) @map("email_attachment_uploaded")
+  emailDossierGenerated         Boolean  @default(true) @map("email_dossier_generated")
+  emailSystemAlert              Boolean  @default(true) @map("email_system_alert")
+  emailDeadlineReminder         Boolean  @default(true) @map("email_deadline_reminder")
+  inAppNotifications            Boolean  @default(true) @map("in_app_notifications")
+  inAppComplaintCreated         Boolean  @default(true) @map("in_app_complaint_created")
+  inAppComplaintAssigned        Boolean  @default(true) @map("in_app_complaint_assigned")
+  inAppComplaintStatusChanged   Boolean  @default(true) @map("in_app_complaint_status_changed")
+  inAppComplaintComment         Boolean  @default(true) @map("in_app_complaint_comment")
+  inAppAttachmentUploaded       Boolean  @default(true) @map("in_app_attachment_uploaded")
+  inAppDossierGenerated         Boolean  @default(true) @map("in_app_dossier_generated")
+  inAppSystemAlert              Boolean  @default(true) @map("in_app_system_alert")
+  inAppDeadlineReminder         Boolean  @default(true) @map("in_app_deadline_reminder")
+  websocketNotifications        Boolean  @default(true) @map("websocket_notifications")
+  notificationSound             Boolean  @default(true) @map("notification_sound")
+  emailDigest                   Boolean  @default(false) @map("email_digest")
+  emailDigestTime               String?  @default("09:00") @map("email_digest_time")
+  createdAt                     DateTime @default(now()) @map("created_at")
+  updatedAt                     DateTime @updatedAt @map("updated_at")
+  user                          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_preferences")
+}
+
+model User {
+  id                       String            @id @default(cuid())
+  email                    String            @unique
+  passwordHash             String            @map("password_hash")
+  fullName                 String?           @map("full_name")
+  role                     UserRole          @default(PUBLIC)
+  isActive                 Boolean           @default(true) @map("is_active")
+  isBlocked                Boolean           @default(false) @map("is_blocked")
+  blockedReason            String?           @map("blocked_reason")
+  blockedAt                DateTime?         @map("blocked_at")
+  blockedBy                String?           @map("blocked_by")
+  lastLoginAt              DateTime?         @map("last_login_at")
+  createdAt                DateTime          @default(now()) @map("created_at")
+  updatedAt                DateTime          @updatedAt @map("updated_at")
+  uploadedAttachments      Attachment[]      @relation("attachments_uploaded_byTousers")
+  deletedAttachments       Attachment[]      @relation("attachments_deleted_byTousers")
+  auditLogs                AuditLog[]
+  createdComplaints        Complaint[]       @relation("complaints_created_byTousers")
+  investigatedComplaints   Complaint[]       @relation("complaints_investigator_idTousers")
+  comments                 ComplaintComment[]
+  dossiers                 Dossier[]
+  notifications            Notification[]
+  refreshTokens            RefreshToken[]
+  preferences              UserPreferences?
+
+  @@map("users")
+}
+
+enum AuditAction {
+  CREATE
+  READ
+  UPDATE
+  DELETE
+  LOGIN
+  LOGOUT
+  EXPORT
+  DOWNLOAD
+  BLOCK
+  UNBLOCK
+}
+
+enum ComplaintPriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum ComplaintStatus {
+  PENDING
+  IN_PROGRESS
+  UNDER_REVIEW
+  RESOLVED
+  DISMISSED
+  ESCALATED
+}
+
+enum ComplaintType {
+  HARASSMENT
+  DISCRIMINATION
+  FRAUD
+  CORRUPTION
+  SAFETY
+  ETHICS
+  OTHER
+}
+
+enum NotificationChannel {
+  EMAIL
+  IN_APP
+  WEBSOCKET
+}
+
+enum NotificationType {
+  COMPLAINT_CREATED
+  COMPLAINT_ASSIGNED
+  COMPLAINT_STATUS_CHANGED
+  COMPLAINT_COMMENT
+  ATTACHMENT_UPLOADED
+  DOSSIER_GENERATED
+  SYSTEM_ALERT
+  DEADLINE_REMINDER
+}
+
+enum UserRole {
+  PUBLIC
+  REPORTER
+  INVESTIGATOR
+  ADMIN
+  AUDITOR
+}

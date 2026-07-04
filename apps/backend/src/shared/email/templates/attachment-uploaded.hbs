@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head><meta charset="UTF-8"><title>Novo Anexo</title>
+<style>body{font-family:Arial,sans-serif;line-height:1.6;color:#333;background:#f4f4f4;margin:0;padding:0}.container{max-width:600px;margin:20px auto;background:#fff;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,.1)}.header{background:linear-gradient(135deg,#0066CC,#004D99);color:#fff;padding:30px;text-align:center}.content{padding:30px}.button{display:inline-block;background:#0066CC;color:#fff!important;text-decoration:none;padding:12px 30px;border-radius:6px;margin:20px 0;font-weight:600}.footer{background:#f8f9fa;padding:20px;text-align:center;font-size:12px;color:#666}.footer a{color:#0066CC;text-decoration:none}.alert-box{background:#E3F2FD;border-left:4px solid #0066CC;padding:15px;margin:20px 0;border-radius:4px}</style>
+</head>
+<body>
+<div class="container">
+<div class="header"><h1>{{appName}}</h1></div>
+<div class="content">
+<h2>📎 Novo Anexo Adicionado</h2>
+<p>Um novo arquivo foi anexado à denúncia <strong>{{protocol}}</strong>.</p>
+<div class="alert-box">
+<p><strong>Arquivo:</strong> {{filename}}</p>
+<p><strong>Enviado por:</strong> {{uploadedBy}}</p>
+<p><strong>Data:</strong> {{formatDate uploadedAt}}</p>
+</div>
+<p><strong>Denúncia:</strong> {{title}}</p>
+<center><a href="{{url}}" class="button">Ver Anexo</a></center>
+</div>
+<div class="footer">
+<p><strong>{{appName}}</strong></p>
+<p><a href="{{appUrl}}">Acessar Sistema</a> | <a href="mailto:{{supportEmail}}">Suporte</a></p>
+<p>&copy; {{year}} {{appName}}.</p>
+</div>
+</div>
+</body>
+</html>

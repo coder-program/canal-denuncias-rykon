@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head><meta charset="UTF-8"><title>Alerta do Sistema</title>
+<style>body{font-family:Arial,sans-serif;line-height:1.6;color:#333;background:#f4f4f4;margin:0;padding:0}.container{max-width:600px;margin:20px auto;background:#fff;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,.1)}.header{background:linear-gradient(135deg,#FF0000,#CC0000);color:#fff;padding:30px;text-align:center}.header.info{background:linear-gradient(135deg,#0066CC,#004D99)}.header.warning{background:linear-gradient(135deg,#FFA500,#FF8C00)}.content{padding:30px}.alert-box{padding:15px;margin:20px 0;border-radius:4px;border-left:4px solid}.alert-box.info{background:#E3F2FD;border-left-color:#0066CC}.alert-box.warning{background:#FFF3E0;border-left-color:#FFA500}.alert-box.error{background:#FFEBEE;border-left-color:#FF0000}.footer{background:#f8f9fa;padding:20px;text-align:center;font-size:12px;color:#666}.footer a{color:#0066CC;text-decoration:none}</style>
+</head>
+<body>
+<div class="container">
+<div class="header {{severity}}"><h1>⚠️ {{title}}</h1></div>
+<div class="content">
+<h2>Alerta do Sistema</h2>
+<div class="alert-box {{severity}}">
+<p>{{message}}</p>
+<p><strong>Tipo:</strong> {{severity}}</p>
+<p><strong>Data:</strong> {{formatDate timestamp}}</p>
+</div>
+<p style="font-size:14px;color:#666;margin-top:30px">
+{{#ifCond severity '==' 'error'}}
+<strong>Ação Imediata Necessária:</strong> Este é um alerta crítico que requer atenção imediata.
+{{else}}{{#ifCond severity '==' 'warning'}}
+<strong>Atenção:</strong> Recomendamos que você verifique esta situação.
+{{else}}
+<strong>Informação:</strong> Este é um alerta informativo do sistema.
+{{/ifCond}}{{/ifCond}}
+</p>
+</div>
+<div class="footer">
+<p><strong>{{appName}}</strong></p>
+<p><a href="{{appUrl}}">Acessar Sistema</a> | <a href="mailto:{{supportEmail}}">Suporte</a></p>
+<p>&copy; {{year}} {{appName}}.</p>
+</div>
+</div>
+</body>
+</html>

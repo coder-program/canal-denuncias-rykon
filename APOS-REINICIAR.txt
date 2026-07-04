@@ -1,0 +1,21 @@
+MongoDB (Documentos e Evidências)
+Detalhes:
+
+Usuário: denuncia_user
+Senha: secure_password
+Host: localhost
+Porta: 27017
+Database: canal_denuncia_docs
+
+Configuração do Banco de Dados
+PostgreSQL (Banco Principal)
+Configuração Atual (arquivo .env):
+
+Detalhes:
+
+Usuário: postgres
+Senha: MINHASENHA
+Host: localhost
+Porta: 5432
+Database: canal_denuncia
+Schema: public

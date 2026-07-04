@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Denúncia Atribuída</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; background-color: #f4f4f4; margin: 0; padding: 0; }
+        .container { max-width: 600px; margin: 20px auto; background-color: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .header { background: linear-gradient(135deg, #0066CC 0%, #004D99 100%); color: #fff; padding: 30px; text-align: center; }
+        .header h1 { margin: 0; font-size: 24px; font-weight: 600; }
+        .content { padding: 30px; }
+        .alert-box { background-color: #E8F5E9; border-left: 4px solid #008000; padding: 15px; margin: 20px 0; border-radius: 4px; }
+        .info-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee; }
+        .info-row:last-child { border-bottom: none; }
+        .info-label { font-weight: 600; color: #666; }
+        .info-value { color: #333; }
+        .button { display: inline-block; background-color: #0066CC; color: #fff !important; text-decoration: none; padding: 12px 30px; border-radius: 6px; margin: 20px 0; font-weight: 600; }
+        .button:hover { background-color: #004D99; }
+        .footer { background-color: #f8f9fa; padding: 20px; text-align: center; font-size: 12px; color: #666; }
+        .footer a { color: #0066CC; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>{{appName}}</h1>
+        </div>
+        <div class="content">
+            <h2>👤 Denúncia Atribuída</h2>
+            <p>Uma denúncia foi atribuída a um investigador.</p>
+            
+            <div class="alert-box">
+                <strong>Protocolo:</strong> {{protocol}}
+            </div>
+            
+            <div style="margin: 20px 0;">
+                <div class="info-row">
+                    <span class="info-label">Título:</span>
+                    <span class="info-value">{{title}}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Investigador:</span>
+                    <span class="info-value">{{investigatorName}}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Data de Atribuição:</span>
+                    <span class="info-value">{{formatDate assignedAt}}</span>
+                </div>
+            </div>
+            
+            <center>
+                <a href="{{url}}" class="button">Ver Denúncia</a>
+            </center>
+            
+            <p style="font-size: 14px; color: #666; margin-top: 30px;">
+                O investigador responsável irá analisar o caso e tomar as ações necessárias.
+            </p>
+        </div>
+        <div class="footer">
+            <p><strong>{{appName}}</strong></p>
+            <p>Este é um email automático. Por favor, não responda.</p>
+            <p><a href="{{appUrl}}">Acessar Sistema</a> | <a href="mailto:{{supportEmail}}">Suporte</a></p>
+            <p>&copy; {{year}} {{appName}}. Todos os direitos reservados.</p>
+        </div>
+    </div>
+</body>
+</html>
