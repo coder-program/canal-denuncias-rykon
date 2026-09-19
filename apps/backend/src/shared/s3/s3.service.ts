@@ -1,4 +1,9 @@
-import { Injectable, Logger, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
   S3Client,
@@ -41,11 +46,12 @@ export class S3Service {
     this.region = this.configService.get<string>('AWS_REGION', 'us-east-1');
     this.bucket = this.configService.get<string>('AWS_S3_BUCKET', 'canal-denuncia-attachments');
     this.localStoragePath = path.join(process.cwd(), 'uploads');
-    
+
     // Verificar se deve usar armazenamento local (desenvolvimento)
     const awsAccessKey = this.configService.get<string>('AWS_ACCESS_KEY_ID', '');
     const nodeEnv = this.configService.get<string>('NODE_ENV', 'development');
-    this.useLocalStorage = nodeEnv === 'development' && 
+    this.useLocalStorage =
+      nodeEnv === 'development' &&
       (awsAccessKey === 'test' || awsAccessKey === 'your-aws-access-key' || !awsAccessKey);
 
     if (this.useLocalStorage) {
@@ -94,17 +100,17 @@ export class S3Service {
       if (this.useLocalStorage) {
         const filePath = path.join(this.localStoragePath, key);
         const fileDir = path.dirname(filePath);
-        
+
         // Criar diretório se não existir
         if (!fs.existsSync(fileDir)) {
           fs.mkdirSync(fileDir, { recursive: true });
         }
-        
+
         // Salvar arquivo localmente
         fs.writeFileSync(filePath, file.buffer);
-        
+
         this.logger.log(`File saved locally: ${key}`);
-        
+
         return {
           key,
           url: `/uploads/${key}`,
@@ -149,7 +155,10 @@ export class S3Service {
   /**
    * Gerar URL pré-assinada para download ou retornar caminho local
    */
-  async getPresignedDownloadUrl(key: string, expiresIn: number = 3600): Promise<PresignedUrlResult> {
+  async getPresignedDownloadUrl(
+    key: string,
+    expiresIn: number = 3600,
+  ): Promise<PresignedUrlResult> {
     try {
       // Se usar armazenamento local, retornar caminho local
       if (this.useLocalStorage) {
@@ -198,7 +207,7 @@ export class S3Service {
 
       const response = await this.s3Client.send(command);
       const stream = response.Body as Readable;
-      
+
       return new Promise<Buffer>((resolve, reject) => {
         const chunks: Buffer[] = [];
         stream.on('data', (chunk) => chunks.push(chunk));
@@ -393,10 +402,12 @@ export class S3Service {
    */
   validateFile(file: Express.Multer.File): { valid: boolean; reason?: string } {
     const maxSize = this.configService.get<number>('MAX_FILE_SIZE', 25 * 1024 * 1024); // 25MB
-    const allowedMimeTypes = this.configService.get<string>(
-      'ALLOWED_MIME_TYPES',
-      'image/jpeg,image/png,image/gif,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/zip',
-    ).split(',');
+    const allowedMimeTypes = this.configService
+      .get<string>(
+        'ALLOWED_MIME_TYPES',
+        'image/jpeg,image/png,image/gif,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/zip',
+      )
+      .split(',');
 
     // Validar tamanho
     if (file.size > maxSize) {

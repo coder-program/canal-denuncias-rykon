@@ -201,9 +201,9 @@ describe('DossiersService', () => {
     it('deve lançar NotFoundException se denúncia não existe', async () => {
       prismaService.complaint.findUnique.mockResolvedValue(null);
 
-      await expect(
-        service.generateDossier('invalid-id', userId, userRole),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.generateDossier('invalid-id', userId, userRole)).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('deve lançar ForbiddenException se REPORTER tentar acessar denúncia de outro', async () => {
@@ -233,7 +233,11 @@ describe('DossiersService', () => {
       prismaService.complaint.findUnique.mockResolvedValue(mockComplaint as any);
       prismaService.dossier.findMany.mockResolvedValue([mockDossier] as any);
 
-      const result = await service.findAllByComplaint('complaint-123', 'user-admin-123', UserRole.ADMIN);
+      const result = await service.findAllByComplaint(
+        'complaint-123',
+        'user-admin-123',
+        UserRole.ADMIN,
+      );
 
       expect(result).toHaveLength(1);
       expect(result[0].id).toBe('dossier-123');
@@ -281,9 +285,9 @@ describe('DossiersService', () => {
     it('deve lançar NotFoundException se dossiê não existe', async () => {
       prismaService.dossier.findUnique.mockResolvedValue(null);
 
-      await expect(
-        service.findOne('invalid-id', 'user-123', UserRole.ADMIN),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.findOne('invalid-id', 'user-123', UserRole.ADMIN)).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('deve lançar ForbiddenException se REPORTER tentar acessar dossiê de outro', async () => {
@@ -304,7 +308,12 @@ describe('DossiersService', () => {
       prismaService.complaint.findUnique.mockResolvedValue(mockComplaint as any);
       s3Service.getPresignedDownloadUrl.mockResolvedValue('https://s3.amazonaws.com/presigned-url');
 
-      const result = await service.getDownloadUrlPDF('dossier-123', 'user-admin-123', UserRole.ADMIN, 3600);
+      const result = await service.getDownloadUrlPDF(
+        'dossier-123',
+        'user-admin-123',
+        UserRole.ADMIN,
+        3600,
+      );
 
       expect(result.downloadUrl).toBe('https://s3.amazonaws.com/presigned-url');
       expect(result.filename).toBe('dossier-DEN-2024-001.pdf');
@@ -348,7 +357,12 @@ describe('DossiersService', () => {
       prismaService.complaint.findUnique.mockResolvedValue(mockComplaint as any);
       s3Service.getPresignedDownloadUrl.mockResolvedValue('https://s3.amazonaws.com/presigned-zip');
 
-      const result = await service.getDownloadUrlZIP('dossier-123', 'user-admin-123', UserRole.ADMIN, 3600);
+      const result = await service.getDownloadUrlZIP(
+        'dossier-123',
+        'user-admin-123',
+        UserRole.ADMIN,
+        3600,
+      );
 
       expect(result.downloadUrl).toBe('https://s3.amazonaws.com/presigned-zip');
       expect(result.filename).toBe('dossier-DEN-2024-001.zip');
@@ -385,9 +399,9 @@ describe('DossiersService', () => {
     });
 
     it('deve lançar ForbiddenException se não for ADMIN', async () => {
-      await expect(
-        service.remove('dossier-123', 'user-auditor', UserRole.AUDITOR),
-      ).rejects.toThrow(ForbiddenException);
+      await expect(service.remove('dossier-123', 'user-auditor', UserRole.AUDITOR)).rejects.toThrow(
+        ForbiddenException,
+      );
     });
 
     it('deve criar log de auditoria após remover dossiê', async () => {

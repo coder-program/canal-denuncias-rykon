@@ -11,16 +11,16 @@ Sistema completo de **Canal de Denúncias** seguro, escalável e personalizável
 
 ## 📚 Documentação
 
-📖 **[DOCUMENTAÇÃO COMPLETA](DOCUMENTACAO-COMPLETA.md)** - Guia detalhado de 113KB com toda arquitetura, tecnologias e implementação
+📖 **[DOCUMENTAÇÃO COMPLETA](docs/DOCUMENTACAO-COMPLETA.md)** - Guia detalhado de 113KB com toda arquitetura, tecnologias e implementação
 
 ### Documentação Adicional
 
 - [Changelog](CHANGELOG.md)
-- [Guia de Instalação](GUIA-INSTALACAO-COMPLETO.md)
-- [Guia de Testes](GUIA-TESTES-MANUAIS.md)
+- [Guia de Instalação](docs/GUIA-INSTALACAO-COMPLETO.md)
+- [Guia de Testes](docs/GUIA-TESTES-MANUAIS.md)
 - [Exemplos da API - Denúncias](docs/COMPLAINTS-API-EXAMPLES.md)
 - [Exemplos da API - Anexos](docs/ATTACHMENTS-API-EXAMPLES.md)
-- **[📄 Módulo de Dossiês (Download PDF)](FUNCIONALIDADE-DOSSIERS.md)** - ✨ Novo!
+- **[📄 Módulo de Dossiês (Download PDF)](docs/FUNCIONALIDADE-DOSSIERS.md)** - ✨ Novo!
 
 ---
 
@@ -46,12 +46,14 @@ Sistema completo de **Canal de Denúncias** seguro, escalável e personalizável
 O **Canal de Denúncias Corporativo** é uma plataforma completa para gestão de denúncias internas que oferece:
 
 ### Para Denunciantes
+
 - ✅ Envio de denúncias **anônimas**
 - ✅ Acompanhamento via **protocolo único**
 - ✅ Upload seguro de **anexos** (documentos, imagens)
 - ✅ Interface intuitiva e responsiva
 
 ### Para Comitê de Compliance
+
 - ✅ **Dashboard em tempo real** com estatísticas e gráficos
 - ✅ **Busca funcional** por protocolo, título, tipo e status
 - ✅ **Gestão de investigações** com timeline de 6 estágios
@@ -59,6 +61,7 @@ O **Canal de Denúncias Corporativo** é uma plataforma completa para gestão de
 - ✅ **Notificações** por email e in-app
 
 ### Para Administradores
+
 - ✅ **Gestão de usuários** com 4 níveis de permissão
 - ✅ **Personalização visual** (logo e cores corporativas)
 - ✅ **Controle de acesso** baseado em roles
@@ -69,6 +72,7 @@ O **Canal de Denúncias Corporativo** é uma plataforma completa para gestão de
 ## 🏗️ Arquitetura
 
 ### Padrão Arquitetural
+
 - **Clean Architecture** (Controllers → Services → Repositories → Entities)
 - **Backend API REST** com NestJS e documentação Swagger
 - **Frontend SPA** com Next.js 14 e App Router
@@ -111,46 +115,50 @@ O **Canal de Denúncias Corporativo** é uma plataforma completa para gestão de
 ## 🚀 Stack Tecnológica
 
 ### Backend
-| Tecnologia | Versão | Propósito |
-|-----------|--------|-----------|
-| **Node.js** | 18.x+ | Runtime JavaScript |
-| **NestJS** | 10.x | Framework modular e escalável |
-| **TypeScript** | 5.x | Type safety |
-| **Prisma** | 5.x | ORM (PostgreSQL) |
-| **PostgreSQL** | 14.x+ | Banco de dados relacional |
-| **Passport.js** | - | Autenticação (JWT + Local) |
-| **bcrypt** | 5.1+ | Hash de senhas |
-| **Swagger** | - | Documentação automática da API |
-| **Nodemailer** | - | Envio de emails |
-| **Multer** | - | Upload de arquivos |
+
+| Tecnologia      | Versão | Propósito                      |
+| --------------- | ------ | ------------------------------ |
+| **Node.js**     | 18.x+  | Runtime JavaScript             |
+| **NestJS**      | 10.x   | Framework modular e escalável  |
+| **TypeScript**  | 5.x    | Type safety                    |
+| **Prisma**      | 5.x    | ORM (PostgreSQL)               |
+| **PostgreSQL**  | 14.x+  | Banco de dados relacional      |
+| **Passport.js** | -      | Autenticação (JWT + Local)     |
+| **bcrypt**      | 5.1+   | Hash de senhas                 |
+| **Swagger**     | -      | Documentação automática da API |
+| **Nodemailer**  | -      | Envio de emails                |
+| **Multer**      | -      | Upload de arquivos             |
 
 ### Frontend
-| Tecnologia | Versão | Propósito |
-|-----------|--------|-----------|
-| **Next.js** | 14.x | Framework React com SSR |
-| **React** | 18.x | Biblioteca UI |
-| **TypeScript** | 5.x | Type safety |
-| **TailwindCSS** | 3.x | Framework CSS utilitário |
-| **Zustand** | 4.x | State management |
-| **Axios** | - | Cliente HTTP |
-| **React Hook Form** | - | Gerenciamento de formulários |
-| **Zod** | - | Validação de schemas |
-| **Recharts** | - | Gráficos e visualizações |
-| **Lucide React** | - | Ícones modernos |
-| **Sonner** | - | Toast notifications |
+
+| Tecnologia          | Versão | Propósito                    |
+| ------------------- | ------ | ---------------------------- |
+| **Next.js**         | 14.x   | Framework React com SSR      |
+| **React**           | 18.x   | Biblioteca UI                |
+| **TypeScript**      | 5.x    | Type safety                  |
+| **TailwindCSS**     | 3.x    | Framework CSS utilitário     |
+| **Zustand**         | 4.x    | State management             |
+| **Axios**           | -      | Cliente HTTP                 |
+| **React Hook Form** | -      | Gerenciamento de formulários |
+| **Zod**             | -      | Validação de schemas         |
+| **Recharts**        | -      | Gráficos e visualizações     |
+| **Lucide React**    | -      | Ícones modernos              |
+| **Sonner**          | -      | Toast notifications          |
 
 ### DevOps & Ferramentas
-| Ferramenta | Propósito |
-|-----------|-----------|
-| **Docker** | Containerização (docker-compose.dev.yml) |
-| **PowerShell** | Scripts de automação (Windows) |
-| **Git** | Controle de versão |
+
+| Ferramenta     | Propósito                                |
+| -------------- | ---------------------------------------- |
+| **Docker**     | Containerização (docker-compose.dev.yml) |
+| **PowerShell** | Scripts de automação (Windows)           |
+| **Git**        | Controle de versão                       |
 
 ---
 
 ## ✨ Funcionalidades Implementadas
 
 ### 🔐 Autenticação & Autorização
+
 - ✅ JWT com **refresh tokens** (Access: 15min | Refresh: 7 dias)
 - ✅ **RBAC** com 4 roles (ADMIN, INVESTIGATOR, REPORTER, VIEWER)
 - ✅ Guards e decorators para proteção de rotas
@@ -158,6 +166,7 @@ O **Canal de Denúncias Corporativo** é uma plataforma completa para gestão de
 - ✅ Recuperação de senha por email
 
 ### 📝 Gestão de Denúncias
+
 - ✅ Criação de denúncias **anônimas**
 - ✅ **Protocolo único** alfanumérico (ex: DEN-2024-ABC123)
 - ✅ **9 tipos de denúncia** (Assédio,Fraude, Discriminação, etc.)
@@ -168,6 +177,7 @@ O **Canal de Denúncias Corporativo** é uma plataforma completa para gestão de
 - ✅ **Busca funcional** por protocolo, título, tipo e status
 
 ### 📎 Upload de Anexos
+
 - ✅ Upload seguro com validação de tipo e tamanho
 - ✅ Tipos permitidos: **PDF, DOCX, PNG, JPG, JPEG**
 - ✅ Limite configurável (padrão: 10MB)
@@ -175,6 +185,7 @@ O **Canal de Denúncias Corporativo** é uma plataforma completa para gestão de
 - ✅ Exclusão de anexos
 
 ### � Dossiês e Relatórios (✨ Novo!)
+
 - ✅ **Geração de relatórios PDF** completos e estruturados
 - ✅ **5 seções**: Resumo, Timeline, Histórico, Anexos, Log de Auditoria
 - ✅ **Download seguro** via botão na interface
@@ -183,15 +194,17 @@ O **Canal de Denúncias Corporativo** é uma plataforma completa para gestão de
 - ✅ Footers personalizados com paginação
 - ✅ Auditoria completa de downloads
 - ✅ Armazenamento local (desenvolvimento) com suporte para S3
-- 📖 **[Documentação Completa](FUNCIONALIDADE-DOSSIERS.md)**
+- 📖 **[Documentação Completa](docs/FUNCIONALIDADE-DOSSIERS.md)**
 
 ### �💬 Sistema de Comentários
+
 - ✅ Comentários vinculados a denúncias
 - ✅ Identificação de autor
 - ✅ Timeline cronológica
 - ✅ Edição e exclusão
 
 ### 🔔 Notificações
+
 - ✅ **Email** com templates HTML
 - ✅ Notificações **in-app** no dashboard
 - ✅ **3 canais** (APP, EMAIL, SMS preparado)
@@ -200,6 +213,7 @@ O **Canal de Denúncias Corporativo** é uma plataforma completa para gestão de
 - ✅ Marcar como lido (individual e em massa)
 
 ### 📊 Dashboard Administrativo
+
 - ✅ **Estatísticas em tempo real** (total, pendentes, em progresso, resolvidos)
 - ✅ **Gráficos com Recharts** (status, tipos, prioridades)
 - ✅ **Busca funcional** com resultados em tabela
@@ -207,18 +221,21 @@ O **Canal de Denúncias Corporativo** é uma plataforma completa para gestão de
 - ✅ Interface responsiva
 
 ### 👥 Gestão de Usuários
+
 - ✅ **CRUD completo** de usuários (Admin)
 - ✅ Atribuição de roles
 - ✅ Listagem com paginação
 - ✅ Filtros e busca
 
 ### 🎨 Personalização
+
 - ✅ Upload de **logo personalizado**
 - ✅ **Cores corporativas** configuráveis
 - ✅ Nome da empresa customizável
 - ✅ Aplicação em toda interface
 
 ### 🌐 Páginas Públicas
+
 - ✅ **Landing page** com hero e features
 - ✅ **Nova Denúncia** (formulário público anônimo)
 - ✅ **Acompanhar Denúncia** por protocolo
@@ -229,7 +246,7 @@ O **Canal de Denúncias Corporativo** é uma plataforma completa para gestão de
 
 ## 📦 Instalação Rápida
 
-> 💡 **Nota:** Consulte [GUIA-INSTALACAO-COMPLETO.md](GUIA-INSTALACAO-COMPLETO.md) para instruções detalhadas
+> 💡 **Nota:** Consulte [GUIA-INSTALACAO-COMPLETO.md](docs/GUIA-INSTALACAO-COMPLETO.md) para instruções detalhadas
 
 ### Pré-requisitos
 
@@ -252,6 +269,7 @@ cd canal-denuncia
 ```
 
 O script automaticamente irá:
+
 - ✅ Instalar dependências do backend e frontend
 - ✅ Configurar variáveis de ambiente
 - ✅ Configurar PostgreSQL (criar DB + migrations)
@@ -287,6 +305,7 @@ cd ../..
 ```
 
 Ou manualmente:
+
 ```sql
 -- Criar banco de dados
 CREATE DATABASE canal_denuncia;
@@ -346,7 +365,7 @@ cd apps/backend
 npm run start:dev
 # Rodando em: http://localhost:3000
 
-# Terminal 2 - Frontend  
+# Terminal 2 - Frontend
 cd apps/frontend
 npm run dev
 # Rodando em: http://localhost:3001
@@ -358,12 +377,12 @@ npm run dev
 
 Após executar o seed, você terá os seguintes usuários de demonstração:
 
-| Email | Senha | Role | Descrição |
-|-------|-------|------|-----------|
-| admin@example.com | admin123 | ADMIN | Administrador completo |
-| investigator@example.com | inv123 | INVESTIGATOR | Investigador de denúncias |
-| reporter@example.com | rep123 | REPORTER | Denunciante interno |
-| viewer@example.com | view123 | VIEWER | Visualizador (somente leitura) |
+| Email                    | Senha    | Role         | Descrição                      |
+| ------------------------ | -------- | ------------ | ------------------------------ |
+| admin@example.com        | admin123 | ADMIN        | Administrador completo         |
+| investigator@example.com | inv123   | INVESTIGATOR | Investigador de denúncias      |
+| reporter@example.com     | rep123   | REPORTER     | Denunciante interno            |
+| viewer@example.com       | view123  | VIEWER       | Visualizador (somente leitura) |
 
 **🔐 Importante:** Altere estas credenciais em produção!
 
@@ -374,12 +393,12 @@ Após executar o seed, você terá os seguintes usuários de demonstração:
 ### Autenticação
 
 ```typescript
-POST   /auth/register       // Registro de novo usuário
-POST   /auth/login          // Login (retorna access + refresh tokens)
-POST   /auth/refresh        // Renovar access token
-POST   /auth/logout         // Logout (invalida refresh token)
-POST   /auth/forgot-password // Solicitar reset de senha
-POST   /auth/reset-password  // Resetar senha com token
+POST / auth / register; // Registro de novo usuário
+POST / auth / login; // Login (retorna access + refresh tokens)
+POST / auth / refresh; // Renovar access token
+POST / auth / logout; // Logout (invalida refresh token)
+POST / auth / forgot - password; // Solicitar reset de senha
+POST / auth / reset - password; // Resetar senha com token
 ```
 
 ### Denúncias (Complaints)
@@ -435,8 +454,8 @@ GET    /users/me            // Dados do usuário autenticado
 ### Configurações (Settings)
 
 ```typescript
-GET    /settings            // Obter configurações da empresa
-PATCH  /settings            // Atualizar configurações (Admin)
+GET / settings; // Obter configurações da empresa
+PATCH / settings; // Atualizar configurações (Admin)
 ```
 
 📚 **Documentação Interativa:** Acesse `http://localhost:3000/api/docs` (Swagger UI) com o backend rodando para testar todos os endpoints!
@@ -470,14 +489,14 @@ npm run prisma:migrate:prod # Rodar migrations em prod
 
 ### Acessos Úteis (Dev)
 
-| Serviço | URL | Credenciais |
-|---------|-----|-------------|
-| **Backend API** | http://localhost:3000 | - |
-| **Swagger Docs** | http://localhost:3000/api/v1/docs | - |
-| **Prisma Studio** | http://localhost:5555 | - |
-| **RabbitMQ Management** | http://localhost:15672 | denuncia_user / secure_password |
-| **Kibana** | http://localhost:5601 | - |
-| **Adminer (DB UI)** | http://localhost:8080 | postgres / denuncia_user / secure_password |
+| Serviço                 | URL                               | Credenciais                                |
+| ----------------------- | --------------------------------- | ------------------------------------------ |
+| **Backend API**         | http://localhost:3000             | -                                          |
+| **Swagger Docs**        | http://localhost:3000/api/v1/docs | -                                          |
+| **Prisma Studio**       | http://localhost:5555             | -                                          |
+| **RabbitMQ Management** | http://localhost:15672            | denuncia_user / secure_password            |
+| **Kibana**              | http://localhost:5601             | -                                          |
+| **Adminer (DB UI)**     | http://localhost:8080             | postgres / denuncia_user / secure_password |
 
 ---
 
@@ -498,6 +517,7 @@ curl -X POST http://localhost:3000/api/v1/auth/register \
 ```
 
 **Resposta (201):**
+
 ```json
 {
   "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
@@ -566,6 +586,7 @@ curl -X POST http://localhost:3000/api/v1/complaints \
 ```
 
 **Resposta esperada:**
+
 ```json
 {
   "id": "uuid-da-denuncia",
@@ -631,6 +652,7 @@ O pipeline está em `.github/workflows/ci-cd.yml` e executa:
 5. **Deploy** para ambiente (staging/production)
 
 **Variáveis necessárias no GitHub Secrets:**
+
 - `DATABASE_URL`
 - `JWT_SECRET`
 - `JWT_REFRESH_SECRET`
@@ -673,13 +695,13 @@ O pipeline está em `.github/workflows/ci-cd.yml` e executa:
 
 ### Medidas de Segurança Implementadas
 
-| Camada | Proteção |
-|--------|----------|
-| **Rede** | TLS 1.3, Rate Limiting, DDoS protection (Cloudflare) |
-| **Aplicação** | Helmet.js, CORS, CSRF tokens, Input validation |
-| **Dados** | Criptografia AES-256, Hash bcrypt (12 rounds), Prepared statements |
-| **Infraestrutura** | Secrets management (Vault), Network isolation, WAF |
-| **Observabilidade** | ELK stack, alertas automáticos, tracing OpenTelemetry |
+| Camada              | Proteção                                                           |
+| ------------------- | ------------------------------------------------------------------ |
+| **Rede**            | TLS 1.3, Rate Limiting, DDoS protection (Cloudflare)               |
+| **Aplicação**       | Helmet.js, CORS, CSRF tokens, Input validation                     |
+| **Dados**           | Criptografia AES-256, Hash bcrypt (12 rounds), Prepared statements |
+| **Infraestrutura**  | Secrets management (Vault), Network isolation, WAF                 |
+| **Observabilidade** | ELK stack, alertas automáticos, tracing OpenTelemetry              |
 
 ---
 
@@ -703,12 +725,12 @@ npm run test:watch
 
 ### Coverage Mínimo
 
-| Tipo | Target |
-|------|--------|
-| **Statements** | 80% |
-| **Branches** | 75% |
-| **Functions** | 80% |
-| **Lines** | 80% |
+| Tipo           | Target |
+| -------------- | ------ |
+| **Statements** | 80%    |
+| **Branches**   | 75%    |
+| **Functions**  | 80%    |
+| **Lines**      | 80%    |
 
 ### Exemplo de Teste (AuthService)
 
@@ -752,6 +774,7 @@ canal-denuncia-corporativo/
 │   │   │   │   ├── audit/       # 🔍 Auditoria
 │   │   │   │   └── notifications/ # 🔔 Notificações
 │   │   │   ├── shared/          # Módulos compartilhados
+│       ├── Dockerfile
 │   │   │   │   ├── prisma/      # Prisma Service
 │   │   │   │   ├── logger/      # Winston Logger
 │   │   │   │   ├── s3/          # AWS S3 Service
@@ -767,8 +790,12 @@ canal-denuncia-corporativo/
 │   │   ├── Dockerfile
 │   │   └── package.json
 │   │
-│   └── frontend/                # React App (próxima etapa)
-│       ├── src/
+│   └── frontend/                # Next.js 15 App (App Router)
+│       ├── app/                 # Rotas e páginas
+│       ├── components/          # Componentes reutilizáveis
+│       ├── hooks/                # Custom hooks
+│       ├── lib/                 # Serviços de API e utilitários
+│       ├── stores/              # Estado global (Zustand)
 │       ├── public/
 │       └── package.json
 │
@@ -794,11 +821,15 @@ canal-denuncia-corporativo/
 │   ├── SECURITY.md              # Políticas de segurança
 │   └── DEPLOYMENT.md            # Guias de deploy
 │
+├── scripts/                     # Scripts utilitários (setup, diagnóstico, start local)
+│
 ├── docker-compose.dev.yml       # Dev environment
-├── docker-compose.yml           # Production
+├── docker-compose.prod.yml      # Production
+├── .env.example                 # Variáveis usadas pelo docker-compose.prod.yml
 ├── turbo.json                   # Turborepo config
 ├── package.json                 # Root package
 ├── .gitignore
+├── CHANGELOG.md
 └── README.md                    # Este arquivo
 ```
 
@@ -843,6 +874,7 @@ Este projeto é proprietário. © 2024 Marcos Augusto Consultoria de Compliance.
 ## 🗺️ Roadmap
 
 ### ✅ Fase 1 - MVP Backend (Concluída)
+
 - [x] Autenticação JWT + Refresh Tokens
 - [x] RBAC completo
 - [x] Módulo de usuários
@@ -852,6 +884,7 @@ Este projeto é proprietário. © 2024 Marcos Augusto Consultoria de Compliance.
 - [x] Docker Compose
 
 ### ✅ Fase 2 - Denúncias (Concluída)
+
 - [x] CRUD completo de denúncias
 - [x] Workflow de 6 status
 - [x] Bloqueio automático de envolvidos
@@ -860,6 +893,7 @@ Este projeto é proprietário. © 2024 Marcos Augusto Consultoria de Compliance.
 - [x] Testes unitários (25+)
 
 ### ✅ Fase 3 - Anexos & AWS S3 (Concluída)
+
 - [x] Upload de arquivos com validação
 - [x] AWS S3 Integration + LocalStack
 - [x] Presigned URLs temporárias
@@ -869,6 +903,7 @@ Este projeto é proprietário. © 2024 Marcos Augusto Consultoria de Compliance.
 - [x] Documentação completa
 
 ### 📋 Fase 4 - Frontend
+
 - [ ] Interface de denúncia pública
 - [ ] Dashboard do denunciante
 - [ ] Painel do comitê
@@ -876,6 +911,7 @@ Este projeto é proprietário. © 2024 Marcos Augusto Consultoria de Compliance.
 - [ ] Personalização visual
 
 ### 📋 Fase 5 - Avançado
+
 - [ ] Geração de dossiês (PDF/ZIP)
 - [ ] Sistema de notificações (Email + Push)
 - [ ] Dashboards e KPIs
@@ -884,6 +920,7 @@ Este projeto é proprietário. © 2024 Marcos Augusto Consultoria de Compliance.
 - [ ] Assinatura digital de documentos
 
 ### 📋 Fase 6 - Produção
+
 - [ ] Kubernetes manifests completos
 - [ ] CI/CD configurado
 - [ ] Monitoramento (Grafana + Prometheus)
@@ -896,6 +933,6 @@ Este projeto é proprietário. © 2024 Marcos Augusto Consultoria de Compliance.
 
 **Desenvolvido com ☕ e 🧠 por uma OG7 de engenharia sênior**
 
-*"Compliance não é custo, é investimento em confiança."*
+_"Compliance não é custo, é investimento em confiança."_
 
 </div>

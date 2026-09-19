@@ -13,7 +13,7 @@ export class SettingsService {
    */
   async findAll(): Promise<Record<string, any>> {
     const settings = await this.prisma.systemSetting.findMany();
-    
+
     // Converter array de key-value para objeto
     const settingsObj: Record<string, any> = {};
     settings.forEach((setting) => {
@@ -51,17 +51,14 @@ export class SettingsService {
   /**
    * Atualiza múltiplas configurações de uma vez
    */
-  async updateSettings(
-    dto: UpdateSettingsDto,
-    userId?: string,
-  ): Promise<Record<string, any>> {
+  async updateSettings(dto: UpdateSettingsDto, userId?: string): Promise<Record<string, any>> {
     const updates: Array<Promise<any>> = [];
 
     // Iterar sobre cada propriedade do DTO e criar/atualizar no banco
     for (const [key, value] of Object.entries(dto)) {
       if (value !== undefined) {
         const stringValue = typeof value === 'string' ? value : JSON.stringify(value);
-        
+
         updates.push(
           this.prisma.systemSetting.upsert({
             where: { key },

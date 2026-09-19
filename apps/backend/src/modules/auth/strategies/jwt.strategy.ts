@@ -20,7 +20,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
 
   async validate(payload: JwtPayload) {
     console.log('[JwtStrategy] Validating payload:', JSON.stringify(payload));
-    
+
     // Verificar se usuário ainda existe e está ativo
     const user = await this.prisma.user.findUnique({
       where: { id: payload.sub },
@@ -32,7 +32,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     }
 
     // Retornar dados do usuário (sem senha)
-    const { passwordHash, ...userWithoutPassword } = user;
+    const { passwordHash: _passwordHash, ...userWithoutPassword } = user;
     console.log('[JwtStrategy] User validated:', userWithoutPassword.id, userWithoutPassword.email);
     return userWithoutPassword;
   }

@@ -16,10 +16,10 @@ export class CreateUserDto {
   @MinLength(6, { message: 'A senha deve ter no mínimo 6 caracteres' })
   password: string;
 
-  @ApiProperty({ 
-    description: 'Role do usuário', 
+  @ApiProperty({
+    description: 'Role do usuário',
     enum: UserRole,
-    example: 'INVESTIGATOR'
+    example: 'INVESTIGATOR',
   })
   @IsEnum(UserRole, { message: 'Role inválida' })
   role: UserRole;

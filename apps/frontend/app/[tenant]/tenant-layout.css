@@ -1,0 +1,92 @@
+/* Estilização baseada em variáveis do tenant */
+
+/* Botões com cor primária */
+.btn-primary {
+  background-color: var(--tenant-primary);
+  color: white;
+  transition: opacity 0.2s;
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+}
+
+/* Botões com cor secundária */
+.btn-secondary {
+  background-color: var(--tenant-secondary);
+  color: white;
+  transition: opacity 0.2s;
+}
+
+.btn-secondary:hover {
+  opacity: 0.9;
+}
+
+/* Links com cor primária */
+a.link-primary {
+  color: var(--tenant-primary);
+}
+
+a.link-primary:hover {
+  opacity: 0.8;
+}
+
+/* Badges */
+.badge-primary {
+  background-color: var(--tenant-primary);
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.badge-secondary {
+  background-color: var(--tenant-secondary);
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+/* Focus rings */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 2px solid var(--tenant-primary);
+  outline-offset: 2px;
+}
+
+/* Progress bars */
+.progress-bar {
+  background-color: var(--tenant-primary);
+}
+
+/* Cards com borda primária */
+.card-primary {
+  border-left: 4px solid var(--tenant-primary);
+}
+
+/* Texto com cor primária */
+.text-primary {
+  color: var(--tenant-primary);
+}
+
+.text-secondary {
+  color: var(--tenant-secondary);
+}
+
+/* Background com cor primária */
+.bg-primary {
+  background-color: var(--tenant-primary);
+}
+
+.bg-secondary {
+  background-color: var(--tenant-secondary);
+}
+
+/* Gradientes */
+.gradient-primary {
+  background: linear-gradient(135deg, var(--tenant-primary), var(--tenant-secondary));
+}

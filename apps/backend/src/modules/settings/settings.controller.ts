@@ -1,11 +1,4 @@
-import {
-  Controller,
-  Get,
-  Patch,
-  Body,
-  UseGuards,
-  Request,
-} from '@nestjs/common';
+import { Controller, Get, Patch, Body, UseGuards, Request } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { SettingsService } from './settings.service';
 import { UpdateSettingsDto } from './dto/update-settings.dto';
@@ -30,15 +23,12 @@ export class SettingsController {
   @Roles(UserRole.ADMIN)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Atualizar configurações do sistema (apenas ADMIN)' })
-  async update(
-    @Body() updateSettingsDto: UpdateSettingsDto,
-    @Request() req: any,
-  ) {
+  async update(@Body() updateSettingsDto: UpdateSettingsDto, @Request() req: any) {
     console.log('📥 Dados recebidos no controller:', updateSettingsDto);
-    console.log('📥 Tipo de cada campo:', Object.entries(updateSettingsDto).map(([k, v]) => `${k}: ${typeof v}`));
-    return this.settingsService.updateSettings(
-      updateSettingsDto,
-      req.user?.userId,
+    console.log(
+      '📥 Tipo de cada campo:',
+      Object.entries(updateSettingsDto).map(([k, v]) => `${k}: ${typeof v}`),
     );
+    return this.settingsService.updateSettings(updateSettingsDto, req.user?.userId);
   }
 }

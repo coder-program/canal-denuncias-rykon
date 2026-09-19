@@ -269,7 +269,11 @@ export class NotificationsService {
     await this.create({
       userId: investigator.id,
       type: NotificationType.COMPLAINT_ASSIGNED,
-      channels: [NotificationChannel.IN_APP, NotificationChannel.EMAIL, NotificationChannel.WEBSOCKET],
+      channels: [
+        NotificationChannel.IN_APP,
+        NotificationChannel.EMAIL,
+        NotificationChannel.WEBSOCKET,
+      ],
       title: 'Denúncia Atribuída',
       message: `Denúncia ${complaint.protocol} foi atribuída a você`,
       data: {
@@ -287,7 +291,11 @@ export class NotificationsService {
   /**
    * Notifica mudança de status
    */
-  async notifyComplaintStatusChanged(complaint: any, oldStatus: string, reason?: string): Promise<void> {
+  async notifyComplaintStatusChanged(
+    complaint: any,
+    oldStatus: string,
+    reason?: string,
+  ): Promise<void> {
     const userIds = [complaint.createdBy];
     if (complaint.investigatorId) userIds.push(complaint.investigatorId);
 
@@ -347,4 +355,3 @@ export class NotificationsService {
     }
   }
 }
-

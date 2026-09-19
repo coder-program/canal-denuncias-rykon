@@ -12,18 +12,35 @@
     "build": "turbo run build",
     "test": "turbo run test",
     "lint": "turbo run lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md,json}\"",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,md,json,yml,yaml}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,md,json,yml,yaml}\"",
+    "audit": "npm audit --workspaces --audit-level=high",
+    "audit:fix": "npm audit fix --workspaces",
     "clean": "turbo run clean && rm -rf node_modules",
     "db:migrate": "cd apps/backend && npm run prisma:migrate",
     "db:seed": "cd apps/backend && npm run prisma:seed",
     "docker:dev": "docker-compose -f docker-compose.dev.yml up",
-    "docker:prod": "docker-compose up"
+    "docker:prod": "docker-compose -f docker-compose.prod.yml up -d",
+    "prepare": "husky"
   },
   "devDependencies": {
     "@types/node": "^20.10.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.2.10",
     "prettier": "^3.1.0",
     "turbo": "^1.11.0",
     "typescript": "^5.3.3"
+  },
+  "lint-staged": {
+    "apps/backend/src/**/*.ts": [
+      "prettier --write"
+    ],
+    "apps/frontend/**/*.{ts,tsx,js,jsx}": [
+      "prettier --write"
+    ],
+    "*.{json,md,yml,yaml}": [
+      "prettier --write"
+    ]
   },
   "engines": {
     "node": ">=20.0.0",

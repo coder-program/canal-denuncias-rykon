@@ -97,20 +97,15 @@ export class AttachmentsController {
     console.log('Request User:', JSON.stringify(req.user));
     console.log('User ID:', req.user?.id);
     console.log('User Role:', req.user?.role);
-    
+
     if (!file) {
       console.error('No file in request');
       throw new BadRequestException('Nenhum arquivo foi enviado');
     }
-    
+
     // O JwtStrategy retorna o objeto user completo, não o payload
     // Então acessamos req.user.id, não req.user.sub
-    return this.attachmentsService.uploadAttachment(
-      file,
-      complaintId,
-      req.user.id,
-      req.user.role,
-    );
+    return this.attachmentsService.uploadAttachment(file, complaintId, req.user.id, req.user.role);
   }
 
   /**
@@ -151,11 +146,7 @@ export class AttachmentsController {
   })
   @ApiResponse({ status: 404, description: 'Denúncia não encontrada' })
   async findAllByComplaint(@Param('complaintId') complaintId: string, @Request() req: any) {
-    return this.attachmentsService.findAllByComplaint(
-      complaintId,
-      req.user.id,
-      req.user.role,
-    );
+    return this.attachmentsService.findAllByComplaint(complaintId, req.user.id, req.user.role);
   }
 
   /**

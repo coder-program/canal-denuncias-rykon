@@ -1,11 +1,15 @@
-import { Injectable, NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+  BadRequestException,
+} from '@nestjs/common';
 import { PrismaService } from '@shared/prisma/prisma.service';
 import { S3Service } from '@shared/s3/s3.service';
 import { LoggerService } from '@shared/logger/logger.service';
 import { UserRole } from '@prisma/client';
 import PDFDocument from 'pdfkit';
 import archiver from 'archiver';
-import { Readable } from 'stream';
 
 interface DossierGenerationOptions {
   includeSummary: boolean;
@@ -33,8 +37,10 @@ export class DossiersService {
     options: Partial<DossierGenerationOptions> = {},
   ) {
     // Log para debug
-    this.logger.log(`[generateDossier] complaintId: ${complaintId}, userId: ${userId}, userRole: ${userRole}`);
-    
+    this.logger.log(
+      `[generateDossier] complaintId: ${complaintId}, userId: ${userId}, userRole: ${userRole}`,
+    );
+
     // Opções padrão
     const opts: DossierGenerationOptions = {
       includeSummary: true,
@@ -102,7 +108,7 @@ export class DossiersService {
     });
 
     // Log de auditoria
-    await this.prisma.auditLog.create({  
+    await this.prisma.auditLog.create({
       data: {
         action: 'CREATE',
         resource: 'dossier',
@@ -327,11 +333,7 @@ export class DossiersService {
   // MÉTODOS PRIVADOS - VALIDAÇÃO
   // ============================================
 
-  private async validateComplaintAccess(
-    complaintId: string,
-    userId: string,
-    userRole: UserRole,
-  ) {
+  private async validateComplaintAccess(complaintId: string, userId: string, userRole: UserRole) {
     const complaint = await this.prisma.complaint.findUnique({
       where: { id: complaintId },
     });
@@ -470,9 +472,7 @@ export class DossiersService {
 
     if (complaint.incidentDate) {
       doc
-        .text(
-          `Data do Incidente: ${new Date(complaint.incidentDate).toLocaleDateString('pt-BR')}`,
-        )
+        .text(`Data do Incidente: ${new Date(complaint.incidentDate).toLocaleDateString('pt-BR')}`)
         .moveDown(0.5);
     }
 

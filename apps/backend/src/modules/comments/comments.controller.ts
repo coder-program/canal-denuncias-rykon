@@ -34,7 +34,8 @@ export class CommentsController {
   @Roles(UserRole.ADMIN, UserRole.INVESTIGATOR, UserRole.REPORTER)
   @ApiOperation({
     summary: 'Adicionar comentário',
-    description: 'Adiciona um novo comentário à denúncia. REPORTER só pode comentar nas próprias denúncias. AUDITOR não pode adicionar comentários.',
+    description:
+      'Adiciona um novo comentário à denúncia. REPORTER só pode comentar nas próprias denúncias. AUDITOR não pode adicionar comentários.',
   })
   @ApiParam({ name: 'complaintId', description: 'ID da denúncia' })
   @ApiResponse({ status: 201, description: 'Comentário criado com sucesso' })
@@ -55,7 +56,8 @@ export class CommentsController {
   @Roles(UserRole.ADMIN, UserRole.INVESTIGATOR, UserRole.AUDITOR, UserRole.REPORTER)
   @ApiOperation({
     summary: 'Listar comentários',
-    description: 'Lista todos os comentários de uma denúncia. REPORTER só vê comentários de suas próprias denúncias.',
+    description:
+      'Lista todos os comentários de uma denúncia. REPORTER só vê comentários de suas próprias denúncias.',
   })
   @ApiParam({ name: 'complaintId', description: 'ID da denúncia' })
   @ApiResponse({ status: 200, description: 'Lista de comentários retornada com sucesso' })
@@ -87,7 +89,8 @@ export class CommentsController {
   @Roles(UserRole.ADMIN, UserRole.INVESTIGATOR, UserRole.REPORTER)
   @ApiOperation({
     summary: 'Atualizar comentário',
-    description: 'Atualiza um comentário. Apenas o autor ou ADMIN podem editar. AUDITOR não pode editar.',
+    description:
+      'Atualiza um comentário. Apenas o autor ou ADMIN podem editar. AUDITOR não pode editar.',
   })
   @ApiParam({ name: 'complaintId', description: 'ID da denúncia' })
   @ApiParam({ name: 'id', description: 'ID do comentário' })
@@ -110,7 +113,8 @@ export class CommentsController {
   @Roles(UserRole.ADMIN, UserRole.INVESTIGATOR, UserRole.REPORTER)
   @ApiOperation({
     summary: 'Deletar comentário',
-    description: 'Deleta um comentário. Apenas o autor ou ADMIN podem deletar. AUDITOR não pode deletar.',
+    description:
+      'Deleta um comentário. Apenas o autor ou ADMIN podem deletar. AUDITOR não pode deletar.',
   })
   @ApiParam({ name: 'complaintId', description: 'ID da denúncia' })
   @ApiParam({ name: 'id', description: 'ID do comentário' })

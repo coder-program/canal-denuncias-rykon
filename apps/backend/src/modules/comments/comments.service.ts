@@ -64,11 +64,10 @@ export class CommentsService {
       },
     });
 
-    this.logger.log(
-      `Comentário criado na denúncia ${complaint.protocol}`,
-      'CommentsService',
-      { commentId: comment.id, complaintId },
-    );
+    this.logger.log(`Comentário criado na denúncia ${complaint.protocol}`, 'CommentsService', {
+      commentId: comment.id,
+      complaintId,
+    });
 
     // Criar notificações para criador e investigador
     await this.notifyNewComment(complaint, comment, userId);

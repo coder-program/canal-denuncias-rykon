@@ -10,8 +10,8 @@ import { UserRole } from '@prisma/client';
 
 describe('AuthService', () => {
   let service: AuthService;
-  let prisma: PrismaService;
-  let jwtService: JwtService;
+  let _prisma: PrismaService;
+  let _jwtService: JwtService;
 
   const mockPrismaService = {
     user: {
@@ -64,8 +64,8 @@ describe('AuthService', () => {
     }).compile();
 
     service = module.get<AuthService>(AuthService);
-    prisma = module.get<PrismaService>(PrismaService);
-    jwtService = module.get<JwtService>(JwtService);
+    _prisma = module.get<PrismaService>(PrismaService);
+    _jwtService = module.get<JwtService>(JwtService);
   });
 
   afterEach(() => {
@@ -103,9 +103,9 @@ describe('AuthService', () => {
     it('deve lançar UnauthorizedException para email inexistente', async () => {
       mockPrismaService.user.findUnique.mockResolvedValue(null);
 
-      await expect(
-        service.validateUser('nonexistent@example.com', 'password123'),
-      ).rejects.toThrow(UnauthorizedException);
+      await expect(service.validateUser('nonexistent@example.com', 'password123')).rejects.toThrow(
+        UnauthorizedException,
+      );
     });
 
     it('deve lançar UnauthorizedException para usuário inativo', async () => {
@@ -120,9 +120,9 @@ describe('AuthService', () => {
 
       mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
 
-      await expect(
-        service.validateUser('test@example.com', 'password123'),
-      ).rejects.toThrow(UnauthorizedException);
+      await expect(service.validateUser('test@example.com', 'password123')).rejects.toThrow(
+        UnauthorizedException,
+      );
     });
 
     it('deve lançar UnauthorizedException para usuário bloqueado', async () => {
@@ -138,9 +138,9 @@ describe('AuthService', () => {
 
       mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
 
-      await expect(
-        service.validateUser('test@example.com', 'password123'),
-      ).rejects.toThrow(UnauthorizedException);
+      await expect(service.validateUser('test@example.com', 'password123')).rejects.toThrow(
+        UnauthorizedException,
+      );
     });
 
     it('deve lançar UnauthorizedException para senha incorreta', async () => {
@@ -155,9 +155,9 @@ describe('AuthService', () => {
 
       mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
 
-      await expect(
-        service.validateUser('test@example.com', 'wrongpassword'),
-      ).rejects.toThrow(UnauthorizedException);
+      await expect(service.validateUser('test@example.com', 'wrongpassword')).rejects.toThrow(
+        UnauthorizedException,
+      );
     });
   });
 
@@ -215,7 +215,10 @@ describe('AuthService', () => {
     });
 
     it('deve retornar false se usuário não tem a role necessária', () => {
-      const result = service.hasPermission(UserRole.REPORTER, [UserRole.ADMIN, UserRole.INVESTIGATOR]);
+      const result = service.hasPermission(UserRole.REPORTER, [
+        UserRole.ADMIN,
+        UserRole.INVESTIGATOR,
+      ]);
       expect(result).toBe(false);
     });
   });

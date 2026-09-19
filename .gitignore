@@ -62,6 +62,18 @@ docker-volumes/
 prisma/migrations/**/*.sql.log
 
 # ====================================
+# UPLOADS / USER-GENERATED FILES
+# ====================================
+apps/backend/uploads/**
+!apps/backend/uploads/.gitkeep
+!apps/backend/uploads/**/.gitkeep
+
+# ====================================
+# GIT HOOKS (managed by husky)
+# ====================================
+.husky/_
+
+# ====================================
 # OS
 # ====================================
 Thumbs.db

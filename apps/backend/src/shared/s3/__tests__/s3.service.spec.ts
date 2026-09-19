@@ -10,7 +10,7 @@ jest.mock('@aws-sdk/s3-request-presigner');
 
 describe('S3Service', () => {
   let service: S3Service;
-  let configService: ConfigService;
+  let _configService: ConfigService;
 
   const mockConfigService = {
     get: jest.fn((key: string, defaultValue?: any) => {
@@ -47,7 +47,7 @@ describe('S3Service', () => {
     }).compile();
 
     service = module.get<S3Service>(S3Service);
-    configService = module.get<ConfigService>(ConfigService);
+    _configService = module.get<ConfigService>(ConfigService);
   });
 
   afterEach(() => {
@@ -79,7 +79,9 @@ describe('S3Service', () => {
       } as Express.Multer.File;
 
       await expect(service.validateFile(invalidFile)).rejects.toThrow(BadRequestException);
-      await expect(service.validateFile(invalidFile)).rejects.toThrow('Tipo de arquivo não permitido');
+      await expect(service.validateFile(invalidFile)).rejects.toThrow(
+        'Tipo de arquivo não permitido',
+      );
     });
 
     it('should throw error for blocked file extensions', async () => {
@@ -90,7 +92,9 @@ describe('S3Service', () => {
       } as Express.Multer.File;
 
       await expect(service.validateFile(blockedFile)).rejects.toThrow(BadRequestException);
-      await expect(service.validateFile(blockedFile)).rejects.toThrow('Extensão de arquivo não permitida');
+      await expect(service.validateFile(blockedFile)).rejects.toThrow(
+        'Extensão de arquivo não permitida',
+      );
     });
 
     it('should validate allowed image types', async () => {
@@ -345,7 +349,7 @@ describe('S3Service', () => {
       });
 
       // Re-create service to test configuration
-      const moduleRef = Test.createTestingModule({
+      Test.createTestingModule({
         providers: [
           S3Service,
           {

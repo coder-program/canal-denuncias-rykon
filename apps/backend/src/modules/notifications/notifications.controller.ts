@@ -1,18 +1,5 @@
-import {
-  Controller,
-  Get,
-  Patch,
-  Param,
-  Request,
-  UseGuards,
-  Query,
-} from '@nestjs/common';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiBearerAuth,
-} from '@nestjs/swagger';
+import { Controller, Get, Patch, Param, Request, UseGuards, Query } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { NotificationsService } from './notifications.service';
 import { JwtAuthGuard } from '@modules/auth/guards/jwt-auth.guard';
 
@@ -30,10 +17,7 @@ export class NotificationsController {
   @Get()
   @ApiOperation({ summary: 'Listar notificações do usuário autenticado' })
   @ApiResponse({ status: 200, description: 'Lista de notificações' })
-  async findAll(
-    @Request() req: any,
-    @Query('isRead') isRead?: string,
-  ) {
+  async findAll(@Request() req: any, @Query('isRead') isRead?: string) {
     const isReadFilter = isRead === 'true' ? true : isRead === 'false' ? false : undefined;
     return this.notificationsService.findAll(req.user.userId, isReadFilter);
   }
@@ -57,10 +41,7 @@ export class NotificationsController {
   @Patch(':id/read')
   @ApiOperation({ summary: 'Marcar notificação como lida' })
   @ApiResponse({ status: 200, description: 'Notificação marcada como lida' })
-  async markAsRead(
-    @Param('id') id: string,
-    @Request() req: any,
-  ) {
+  async markAsRead(@Param('id') id: string, @Request() req: any) {
     await this.notificationsService.markAsRead(id, req.user.userId);
     return { message: 'Notificação marcada como lida' };
   }

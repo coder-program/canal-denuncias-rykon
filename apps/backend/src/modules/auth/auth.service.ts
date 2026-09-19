@@ -1,13 +1,7 @@
-import {
-  Injectable,
-  UnauthorizedException,
-  BadRequestException,
-  Logger,
-} from '@nestjs/common';
+import { Injectable, UnauthorizedException, BadRequestException, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import bcrypt from 'bcrypt';
-import { nanoid } from 'nanoid';
 import { PrismaService } from '@shared/prisma/prisma.service';
 import { LoggerService } from '@shared/logger/logger.service';
 import { LoginDto } from './dto/login.dto';
@@ -90,7 +84,7 @@ export class AuthService {
       data: { lastLoginAt: new Date() },
     });
 
-    const { passwordHash, ...result } = user;
+    const { passwordHash: _passwordHash, ...result } = user;
     return result;
   }
 
@@ -125,7 +119,11 @@ export class AuthService {
   /**
    * Login Admin - Apenas para SUPER_ADMIN
    */
-  async loginAdmin(loginDto: LoginDto, ipAddress?: string, userAgent?: string): Promise<AuthResponse> {
+  async loginAdmin(
+    loginDto: LoginDto,
+    ipAddress?: string,
+    userAgent?: string,
+  ): Promise<AuthResponse> {
     const user = await this.validateUser(loginDto.email, loginDto.password);
 
     // Validar se é SUPER_ADMIN
@@ -133,7 +131,7 @@ export class AuthService {
       this.loggerService.warn(
         `Unauthorized admin login attempt by non-SUPER_ADMIN user: ${user.email}`,
         'AuthService',
-        { role: user.role }
+        { role: user.role },
       );
       throw new UnauthorizedException('Acesso restrito a Super Administradores');
     }
@@ -229,11 +227,9 @@ export class AuthService {
     }
 
     if (storedToken.isRevoked) {
-      this.loggerService.warn(
-        `Attempt to use revoked refresh token`,
-        'AuthService',
-        { userId: storedToken.userId },
-      );
+      this.loggerService.warn(`Attempt to use revoked refresh token`, 'AuthService', {
+        userId: storedToken.userId,
+      });
       throw new UnauthorizedException('Refresh token foi revogado');
     }
 
@@ -252,7 +248,7 @@ export class AuthService {
     });
 
     // Gerar novos tokens
-    const { passwordHash, ...user } = storedToken.user;
+    const { passwordHash: _passwordHash, ...user } = storedToken.user;
     return this.generateTokens(user, ipAddress);
   }
 

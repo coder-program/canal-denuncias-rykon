@@ -9,6 +9,7 @@ import { PrismaService } from '@shared/prisma/prisma.service';
 import { S3Service } from '@shared/s3/s3.service';
 import { LoggerService } from '@shared/logger/logger.service';
 import { UserRole } from '@prisma/client';
+import { createHash } from 'crypto';
 
 @Injectable()
 export class AttachmentsService {
@@ -106,7 +107,7 @@ export class AttachmentsService {
    */
   async findAllByComplaint(complaintId: string, userId: string, userRole: UserRole) {
     this.logger.log(`Finding attachments for complaint ${complaintId}`, 'AttachmentsService');
-    
+
     // Verificar se denúncia existe e se usuário tem acesso
     const complaint = await this.prisma.complaint.findUnique({
       where: { id: complaintId },
@@ -123,7 +124,10 @@ export class AttachmentsService {
 
     // RBAC: REPORTER só vê anexos de suas próprias denúncias
     if (userRole === UserRole.REPORTER && complaint.createdBy !== userId) {
-      this.logger.warn(`User ${userId} (REPORTER) tried to access complaint ${complaintId}`, 'AttachmentsService');
+      this.logger.warn(
+        `User ${userId} (REPORTER) tried to access complaint ${complaintId}`,
+        'AttachmentsService',
+      );
       throw new ForbiddenException('Você não tem permissão para ver anexos desta denúncia');
     }
 
@@ -142,7 +146,10 @@ export class AttachmentsService {
       orderBy: { uploadedAt: 'desc' },
     });
 
-    this.logger.log(`Found ${attachments.length} attachments for complaint ${complaintId}`, 'AttachmentsService');
+    this.logger.log(
+      `Found ${attachments.length} attachments for complaint ${complaintId}`,
+      'AttachmentsService',
+    );
     return attachments;
   }
 
@@ -190,10 +197,7 @@ export class AttachmentsService {
     const attachment = await this.findOne(id, userId, userRole);
 
     // Gerar URL pré-assinada
-    const presignedUrl = await this.s3Service.getPresignedDownloadUrl(
-      attachment.s3Key,
-      expiresIn,
-    );
+    const presignedUrl = await this.s3Service.getPresignedDownloadUrl(attachment.s3Key, expiresIn);
 
     // Log de auditoria
     await this.prisma.auditLog.create({
@@ -267,11 +271,10 @@ export class AttachmentsService {
       },
     });
 
-    this.loggerService.log(
-      `Attachment deleted: ${attachment.filename}`,
-      'AttachmentsService',
-      { attachmentId: attachment.id, userId },
-    );
+    this.loggerService.log(`Attachment deleted: ${attachment.filename}`, 'AttachmentsService', {
+      attachmentId: attachment.id,
+      userId,
+    });
 
     return { message: 'Anexo deletado com sucesso' };
   }
@@ -286,8 +289,7 @@ export class AttachmentsService {
     const fileBuffer = await this.s3Service.downloadFile(attachment.s3Key);
 
     // Calcular hash atual
-    const crypto = require('crypto');
-    const currentHash = crypto.createHash('sha256').update(fileBuffer).digest('hex');
+    const currentHash = createHash('sha256').update(fileBuffer).digest('hex');
 
     // Comparar com hash armazenado
     const isValid = currentHash === attachment.sha256Hash;

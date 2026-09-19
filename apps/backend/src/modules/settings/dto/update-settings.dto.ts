@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsBoolean, IsObject, IsEmail } from 'class-validator';
+import { IsString, IsOptional, IsBoolean, IsEmail } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdateSettingsDto {
@@ -52,17 +52,26 @@ export class UpdateSettingsDto {
   @IsString()
   docCodigoEtica?: string;
 
-  @ApiProperty({ description: 'URL do documento: Política de Relacionamento com Fornecedores', required: false })
+  @ApiProperty({
+    description: 'URL do documento: Política de Relacionamento com Fornecedores',
+    required: false,
+  })
   @IsOptional()
   @IsString()
   docPoliticaFornecedores?: string;
 
-  @ApiProperty({ description: 'URL do documento: Política Anticorrupção e Antissuborno', required: false })
+  @ApiProperty({
+    description: 'URL do documento: Política Anticorrupção e Antissuborno',
+    required: false,
+  })
   @IsOptional()
   @IsString()
   docPoliticaAnticorrupcao?: string;
 
-  @ApiProperty({ description: 'URL do documento: Política de Participação em Licitações', required: false })
+  @ApiProperty({
+    description: 'URL do documento: Política de Participação em Licitações',
+    required: false,
+  })
   @IsOptional()
   @IsString()
   docPoliticaLicitacoes?: string;

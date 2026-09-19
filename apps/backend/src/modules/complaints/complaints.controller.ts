@@ -12,14 +12,7 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiBearerAuth,
-  ApiParam,
-  ApiQuery,
-} from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam } from '@nestjs/swagger';
 import { ComplaintsService } from './complaints.service';
 import { CreateComplaintDto } from './dto/create-complaint.dto';
 import { UpdateComplaintDto } from './dto/update-complaint.dto';
@@ -62,15 +55,15 @@ export class ComplaintsController {
     },
   })
   @ApiResponse({ status: 400, description: 'Dados inválidos' })
-  async create(
-    @Body() createComplaintDto: CreateComplaintDto,
-    @Request() req?: any,
-  ) {
+  async create(@Body() createComplaintDto: CreateComplaintDto, @Request() req?: any) {
     console.log('[ComplaintsController] POST /complaints called');
-    console.log('[ComplaintsController] Request body:', JSON.stringify(createComplaintDto, null, 2));
+    console.log(
+      '[ComplaintsController] Request body:',
+      JSON.stringify(createComplaintDto, null, 2),
+    );
     console.log('[ComplaintsController] User authenticated:', !!req?.user);
     console.log('[ComplaintsController] User ID:', req?.user?.id);
-    
+
     // Aceita requisições autenticadas e não autenticadas
     // Se autenticado, passa o userId. Se não, passa undefined
     const userId = req?.user?.id;

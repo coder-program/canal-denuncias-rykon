@@ -1,10 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-  BadRequestException,
-  ForbiddenException,
-  Logger,
-} from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '@shared/prisma/prisma.service';
 import { LoggerService } from '@shared/logger/logger.service';
@@ -42,7 +36,7 @@ export class ComplaintsService {
       console.log('[ComplaintsService] Creating complaint...');
       console.log('[ComplaintsService] DTO:', JSON.stringify(createComplaintDto, null, 2));
       console.log('[ComplaintsService] UserId:', userId);
-      
+
       const protocol = this.generateProtocol();
       console.log('[ComplaintsService] Generated protocol:', protocol);
 
@@ -133,28 +127,29 @@ export class ComplaintsService {
         await this.notifyNewComplaint(complaint);
         console.log('[ComplaintsService] Notifications sent');
       } catch (error) {
-        console.warn('[ComplaintsService] Failed to send notifications (non-critical):', error.message);
+        console.warn(
+          '[ComplaintsService] Failed to send notifications (non-critical):',
+          error.message,
+        );
       }
 
       // Bloquear automaticamente usuários citados (se configurado)
       if (involvedPeople && involvedPeople.length > 0) {
         try {
-          await this.autoBlockInvolvedUsers(
-            involvedPeople,
-            complaint.id,
-            userId,
-          );
+          await this.autoBlockInvolvedUsers(involvedPeople, complaint.id, userId);
           console.log('[ComplaintsService] Involved users processed');
         } catch (error) {
-          console.warn('[ComplaintsService] Failed to process involved users (non-critical):', error.message);
+          console.warn(
+            '[ComplaintsService] Failed to process involved users (non-critical):',
+            error.message,
+          );
         }
       }
 
-      this.loggerService.log(
-        `Nova denúncia criada: ${protocol}`,
-        'ComplaintsService',
-        { complaintId: complaint.id, isAnonymous: complaint.isAnonymous },
-      );
+      this.loggerService.log(`Nova denúncia criada: ${protocol}`, 'ComplaintsService', {
+        complaintId: complaint.id,
+        isAnonymous: complaint.isAnonymous,
+      });
 
       // Não retornar dados sensíveis descriptografados
       const result = this.sanitizeComplaint(complaint);
@@ -163,7 +158,10 @@ export class ComplaintsService {
     } catch (error) {
       console.error('[ComplaintsService] ❌ Error creating complaint:', error);
       console.error('[ComplaintsService] Error stack:', error.stack);
-      console.error('[ComplaintsService] DTO received:', JSON.stringify(createComplaintDto, null, 2));
+      console.error(
+        '[ComplaintsService] DTO received:',
+        JSON.stringify(createComplaintDto, null, 2),
+      );
       throw error;
     }
   }
@@ -172,7 +170,16 @@ export class ComplaintsService {
    * Listar denúncias com filtros e paginação
    */
   async findAll(query: QueryComplaintsDto, userRole: UserRole, userId?: string) {
-    const { page = 1, limit = 20, status, type, priority, search, sortBy = 'createdAt', sortOrder = 'desc' } = query;
+    const {
+      page = 1,
+      limit = 20,
+      status,
+      type,
+      priority,
+      search,
+      sortBy = 'createdAt',
+      sortOrder = 'desc',
+    } = query;
 
     const where: Prisma.ComplaintWhereInput = {};
 
@@ -364,9 +371,11 @@ export class ComplaintsService {
         action: 'UPDATE',
         resource: 'complaint',
         resourceId: id,
-        details: JSON.parse(JSON.stringify({
-          changes: updateComplaintDto,
-        })),
+        details: JSON.parse(
+          JSON.stringify({
+            changes: updateComplaintDto,
+          }),
+        ),
       },
     });
 
@@ -521,7 +530,7 @@ export class ComplaintsService {
     }
 
     // Não deletar fisicamente, apenas marcar como DISMISSED
-    const updated = await this.changeStatus(id, 'DISMISSED', 'Denúncia removida', userId);
+    await this.changeStatus(id, 'DISMISSED', 'Denúncia removida', userId);
 
     this.loggerService.warn(`Denúncia removida: ${complaint.protocol}`, 'ComplaintsService', {
       complaintId: id,
@@ -683,10 +692,7 @@ export class ComplaintsService {
     // Buscar usuários por email ou nome
     const users = await this.prisma.user.findMany({
       where: {
-        OR: [
-          { email: { in: involvedPeople } },
-          { fullName: { in: involvedPeople } },
-        ],
+        OR: [{ email: { in: involvedPeople } }, { fullName: { in: involvedPeople } }],
         isBlocked: false,
       },
     });
@@ -750,14 +756,20 @@ export class ComplaintsService {
         inProgress,
         resolved,
       },
-      byType: byType.reduce((acc: any, item: any) => {
-        acc[item.type] = item._count;
-        return acc;
-      }, {} as Record<string, number>),
-      byPriority: byPriority.reduce((acc: any, item: any) => {
-        acc[item.priority] = item._count;
-        return acc;
-      }, {} as Record<string, number>),
+      byType: byType.reduce(
+        (acc: any, item: any) => {
+          acc[item.type] = item._count;
+          return acc;
+        },
+        {} as Record<string, number>,
+      ),
+      byPriority: byPriority.reduce(
+        (acc: any, item: any) => {
+          acc[item.priority] = item._count;
+          return acc;
+        },
+        {} as Record<string, number>,
+      ),
     };
   }
 

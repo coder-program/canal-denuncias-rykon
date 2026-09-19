@@ -8,9 +8,9 @@ import { UserRole } from '@prisma/client';
 
 describe('AttachmentsService', () => {
   let service: AttachmentsService;
-  let prismaService: PrismaService;
-  let s3Service: S3Service;
-  let loggerService: LoggerService;
+  let _prismaService: PrismaService;
+  let _s3Service: S3Service;
+  let _loggerService: LoggerService;
 
   const mockPrismaService = {
     complaint: {
@@ -95,9 +95,9 @@ describe('AttachmentsService', () => {
     }).compile();
 
     service = module.get<AttachmentsService>(AttachmentsService);
-    prismaService = module.get<PrismaService>(PrismaService);
-    s3Service = module.get<S3Service>(S3Service);
-    loggerService = module.get<LoggerService>(LoggerService);
+    _prismaService = module.get<PrismaService>(PrismaService);
+    _s3Service = module.get<S3Service>(S3Service);
+    _loggerService = module.get<LoggerService>(LoggerService);
   });
 
   afterEach(() => {
@@ -197,11 +197,7 @@ describe('AttachmentsService', () => {
       mockPrismaService.complaint.findUnique.mockResolvedValue(mockComplaint);
       mockPrismaService.attachment.findMany.mockResolvedValue([mockAttachment]);
 
-      const result = await service.findAllByComplaint(
-        'complaint-123',
-        'admin-789',
-        UserRole.ADMIN,
-      );
+      const result = await service.findAllByComplaint('complaint-123', 'admin-789', UserRole.ADMIN);
 
       expect(result).toHaveLength(1);
       expect(result[0].filename).toBe('evidence.pdf');
@@ -225,11 +221,7 @@ describe('AttachmentsService', () => {
         { ...mockAttachment, id: 'attachment-456', deletedAt: new Date() },
       ]);
 
-      const result = await service.findAllByComplaint(
-        'complaint-123',
-        'admin-789',
-        UserRole.ADMIN,
-      );
+      await service.findAllByComplaint('complaint-123', 'admin-789', UserRole.ADMIN);
 
       expect(mockPrismaService.attachment.findMany).toHaveBeenCalledWith({
         where: {
@@ -269,9 +261,9 @@ describe('AttachmentsService', () => {
         complaint: { ...mockComplaint, createdBy: 'other-user' },
       });
 
-      await expect(service.findOne('attachment-123', 'user-123', UserRole.REPORTER)).rejects.toThrow(
-        ForbiddenException,
-      );
+      await expect(
+        service.findOne('attachment-123', 'user-123', UserRole.REPORTER),
+      ).rejects.toThrow(ForbiddenException);
     });
   });
 
@@ -345,9 +337,9 @@ describe('AttachmentsService', () => {
         complaint: mockComplaint,
       });
 
-      await expect(
-        service.remove('attachment-123', 'user-123', UserRole.REPORTER),
-      ).rejects.toThrow(ForbiddenException);
+      await expect(service.remove('attachment-123', 'user-123', UserRole.REPORTER)).rejects.toThrow(
+        ForbiddenException,
+      );
     });
 
     it('should allow REPORTER to delete own attachment', async () => {

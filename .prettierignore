@@ -1,0 +1,23 @@
+# Build outputs
+dist/
+build/
+.next/
+.turbo/
+coverage/
+
+# Dependencies
+node_modules/
+
+# Generated / vendored
+apps/backend/uploads/
+package-lock.json
+apps/backend/package-lock.json
+apps/*/package-lock.json
+
+# Prisma migrations SQL is generated, not hand-formatted
+apps/backend/prisma/migrations/
+
+# Env files
+.env
+.env.*
+!.env.example

@@ -20,7 +20,7 @@ export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'jwt-refresh'
     });
   }
 
-  async validate(req: Request, payload: JwtPayload) {
+  async validate(req: Request, _payload: JwtPayload) {
     const refreshToken = req.body?.refreshToken;
 
     if (!refreshToken) {
@@ -41,7 +41,7 @@ export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'jwt-refresh'
       throw new UnauthorizedException('Refresh token expirado');
     }
 
-    const { passwordHash, ...user } = storedToken.user;
+    const { passwordHash: _passwordHash, ...user } = storedToken.user;
     return { ...user, refreshToken };
   }
 }

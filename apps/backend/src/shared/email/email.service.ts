@@ -52,7 +52,10 @@ export class EmailService {
       const html = await this.renderTemplate(options.template, options.context);
 
       const mailOptions = {
-        from: this.configService.get<string>('SMTP_FROM', '"Canal de Denúncias" <noreply@canaldenuncia.com>'),
+        from: this.configService.get<string>(
+          'SMTP_FROM',
+          '"Canal de Denúncias" <noreply@canaldenuncia.com>',
+        ),
         to: Array.isArray(options.to) ? options.to.join(', ') : options.to,
         subject: options.subject,
         html,
@@ -92,14 +95,17 @@ export class EmailService {
   /**
    * Envia email de nova denúncia criada
    */
-  async sendComplaintCreated(to: string, data: {
-    protocol: string;
-    title: string;
-    type: string;
-    priority: string;
-    createdAt: string;
-    url: string;
-  }): Promise<boolean> {
+  async sendComplaintCreated(
+    to: string,
+    data: {
+      protocol: string;
+      title: string;
+      type: string;
+      priority: string;
+      createdAt: string;
+      url: string;
+    },
+  ): Promise<boolean> {
     return this.sendEmail({
       to,
       subject: `Nova Denúncia Criada - ${data.protocol}`,
@@ -111,13 +117,16 @@ export class EmailService {
   /**
    * Envia email de denúncia atribuída
    */
-  async sendComplaintAssigned(to: string, data: {
-    protocol: string;
-    title: string;
-    investigatorName: string;
-    assignedAt: string;
-    url: string;
-  }): Promise<boolean> {
+  async sendComplaintAssigned(
+    to: string,
+    data: {
+      protocol: string;
+      title: string;
+      investigatorName: string;
+      assignedAt: string;
+      url: string;
+    },
+  ): Promise<boolean> {
     return this.sendEmail({
       to,
       subject: `Denúncia Atribuída - ${data.protocol}`,
@@ -129,15 +138,18 @@ export class EmailService {
   /**
    * Envia email de status alterado
    */
-  async sendComplaintStatusChanged(to: string, data: {
-    protocol: string;
-    title: string;
-    oldStatus: string;
-    newStatus: string;
-    reason?: string;
-    changedAt: string;
-    url: string;
-  }): Promise<boolean> {
+  async sendComplaintStatusChanged(
+    to: string,
+    data: {
+      protocol: string;
+      title: string;
+      oldStatus: string;
+      newStatus: string;
+      reason?: string;
+      changedAt: string;
+      url: string;
+    },
+  ): Promise<boolean> {
     return this.sendEmail({
       to,
       subject: `Status Alterado - ${data.protocol}`,
@@ -149,14 +161,17 @@ export class EmailService {
   /**
    * Envia email de novo comentário
    */
-  async sendComplaintComment(to: string, data: {
-    protocol: string;
-    title: string;
-    authorName: string;
-    comment: string;
-    commentedAt: string;
-    url: string;
-  }): Promise<boolean> {
+  async sendComplaintComment(
+    to: string,
+    data: {
+      protocol: string;
+      title: string;
+      authorName: string;
+      comment: string;
+      commentedAt: string;
+      url: string;
+    },
+  ): Promise<boolean> {
     return this.sendEmail({
       to,
       subject: `Novo Comentário - ${data.protocol}`,
@@ -168,14 +183,17 @@ export class EmailService {
   /**
    * Envia email de novo anexo
    */
-  async sendAttachmentUploaded(to: string, data: {
-    protocol: string;
-    title: string;
-    filename: string;
-    uploadedBy: string;
-    uploadedAt: string;
-    url: string;
-  }): Promise<boolean> {
+  async sendAttachmentUploaded(
+    to: string,
+    data: {
+      protocol: string;
+      title: string;
+      filename: string;
+      uploadedBy: string;
+      uploadedAt: string;
+      url: string;
+    },
+  ): Promise<boolean> {
     return this.sendEmail({
       to,
       subject: `Novo Anexo Adicionado - ${data.protocol}`,
@@ -187,13 +205,16 @@ export class EmailService {
   /**
    * Envia email de dossiê gerado
    */
-  async sendDossierGenerated(to: string, data: {
-    protocol: string;
-    title: string;
-    generatedBy: string;
-    generatedAt: string;
-    downloadUrl: string;
-  }): Promise<boolean> {
+  async sendDossierGenerated(
+    to: string,
+    data: {
+      protocol: string;
+      title: string;
+      generatedBy: string;
+      generatedAt: string;
+      downloadUrl: string;
+    },
+  ): Promise<boolean> {
     return this.sendEmail({
       to,
       subject: `Dossiê Gerado - ${data.protocol}`,
@@ -205,13 +226,16 @@ export class EmailService {
   /**
    * Envia email de lembrete de prazo
    */
-  async sendDeadlineReminder(to: string, data: {
-    protocol: string;
-    title: string;
-    deadline: string;
-    daysRemaining: number;
-    url: string;
-  }): Promise<boolean> {
+  async sendDeadlineReminder(
+    to: string,
+    data: {
+      protocol: string;
+      title: string;
+      deadline: string;
+      daysRemaining: number;
+      url: string;
+    },
+  ): Promise<boolean> {
     return this.sendEmail({
       to,
       subject: `Lembrete de Prazo - ${data.protocol}`,
@@ -223,12 +247,15 @@ export class EmailService {
   /**
    * Envia email de alerta do sistema
    */
-  async sendSystemAlert(to: string, data: {
-    title: string;
-    message: string;
-    severity: 'info' | 'warning' | 'error';
-    timestamp: string;
-  }): Promise<boolean> {
+  async sendSystemAlert(
+    to: string,
+    data: {
+      title: string;
+      message: string;
+      severity: 'info' | 'warning' | 'error';
+      timestamp: string;
+    },
+  ): Promise<boolean> {
     return this.sendEmail({
       to,
       subject: `Alerta do Sistema - ${data.title}`,
@@ -240,19 +267,22 @@ export class EmailService {
   /**
    * Envia email de resumo diário
    */
-  async sendDailyDigest(to: string, data: {
-    userName: string;
-    date: string;
-    newComplaints: number;
-    updatedComplaints: number;
-    pendingActions: number;
-    complaints: Array<{
-      protocol: string;
-      title: string;
-      status: string;
-      url: string;
-    }>;
-  }): Promise<boolean> {
+  async sendDailyDigest(
+    to: string,
+    data: {
+      userName: string;
+      date: string;
+      newComplaints: number;
+      updatedComplaints: number;
+      pendingActions: number;
+      complaints: Array<{
+        protocol: string;
+        title: string;
+        status: string;
+        url: string;
+      }>;
+    },
+  ): Promise<boolean> {
     return this.sendEmail({
       to,
       subject: `Resumo Diário - ${data.date}`,
@@ -264,12 +294,15 @@ export class EmailService {
   /**
    * Renderiza template Handlebars
    */
-  private async renderTemplate(templateName: string, context: Record<string, any>): Promise<string> {
+  private async renderTemplate(
+    templateName: string,
+    context: Record<string, any>,
+  ): Promise<string> {
     try {
       const templatePath = path.join(this.templatesPath, `${templateName}.hbs`);
       const templateContent = fs.readFileSync(templatePath, 'utf-8');
       const template = handlebars.compile(templateContent);
-      
+
       // Adicionar variáveis globais ao contexto
       const fullContext = {
         ...context,
@@ -368,28 +401,28 @@ export class EmailService {
     });
 
     // Helper condicional
-    handlebars.registerHelper('ifCond', function(v1, operator, v2, options) {
+    handlebars.registerHelper('ifCond', function (v1, operator, v2, options) {
       switch (operator) {
         case '==':
-          return (v1 == v2) ? options.fn(this) : options.inverse(this);
+          return v1 == v2 ? options.fn(this) : options.inverse(this);
         case '===':
-          return (v1 === v2) ? options.fn(this) : options.inverse(this);
+          return v1 === v2 ? options.fn(this) : options.inverse(this);
         case '!=':
-          return (v1 != v2) ? options.fn(this) : options.inverse(this);
+          return v1 != v2 ? options.fn(this) : options.inverse(this);
         case '!==':
-          return (v1 !== v2) ? options.fn(this) : options.inverse(this);
+          return v1 !== v2 ? options.fn(this) : options.inverse(this);
         case '<':
-          return (v1 < v2) ? options.fn(this) : options.inverse(this);
+          return v1 < v2 ? options.fn(this) : options.inverse(this);
         case '<=':
-          return (v1 <= v2) ? options.fn(this) : options.inverse(this);
+          return v1 <= v2 ? options.fn(this) : options.inverse(this);
         case '>':
-          return (v1 > v2) ? options.fn(this) : options.inverse(this);
+          return v1 > v2 ? options.fn(this) : options.inverse(this);
         case '>=':
-          return (v1 >= v2) ? options.fn(this) : options.inverse(this);
+          return v1 >= v2 ? options.fn(this) : options.inverse(this);
         case '&&':
-          return (v1 && v2) ? options.fn(this) : options.inverse(this);
+          return v1 && v2 ? options.fn(this) : options.inverse(this);
         case '||':
-          return (v1 || v2) ? options.fn(this) : options.inverse(this);
+          return v1 || v2 ? options.fn(this) : options.inverse(this);
         default:
           return options.inverse(this);
       }

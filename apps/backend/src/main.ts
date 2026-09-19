@@ -26,21 +26,23 @@ async function bootstrap() {
   // ====================================
   // SECURITY MIDDLEWARES
   // ====================================
-  app.use(helmet({
-    contentSecurityPolicy: {
-      directives: {
-        defaultSrc: ["'self'"],
-        styleSrc: ["'self'", "'unsafe-inline'"],
-        scriptSrc: ["'self'"],
-        imgSrc: ["'self'", 'data:', 'https:'],
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'self'"],
+          styleSrc: ["'self'", "'unsafe-inline'"],
+          scriptSrc: ["'self'"],
+          imgSrc: ["'self'", 'data:', 'https:'],
+        },
       },
-    },
-    hsts: {
-      maxAge: 31536000,
-      includeSubDomains: true,
-      preload: true,
-    },
-  }));
+      hsts: {
+        maxAge: 31536000,
+        includeSubDomains: true,
+        preload: true,
+      },
+    }),
+  );
 
   app.use(compression());
 
@@ -80,26 +82,22 @@ async function bootstrap() {
     .setTitle('Canal de Denúncias - API')
     .setDescription(
       'API REST para Canal de Denúncias Corporativo - Produção Grade\n\n' +
-      '## Funcionalidades\n' +
-      '- Autenticação JWT com refresh tokens\n' +
-      '- RBAC (Role-Based Access Control)\n' +
-      '- Denúncias anônimas ou identificadas\n' +
-      '- Gestão de investigações e dossiês\n' +
-      '- Upload de evidências com validação\n' +
-      '- Auditoria completa e logs imutáveis\n' +
-      '- Conformidade LGPD, ISO 27001, ISO 37002\n\n' +
-      '## Segurança\n' +
-      '- TLS 1.3 obrigatório em produção\n' +
-      '- Rate limiting habilitado\n' +
-      '- Criptografia AES-256 para dados sensíveis\n' +
-      '- Tokens JWT com expiração curta',
+        '## Funcionalidades\n' +
+        '- Autenticação JWT com refresh tokens\n' +
+        '- RBAC (Role-Based Access Control)\n' +
+        '- Denúncias anônimas ou identificadas\n' +
+        '- Gestão de investigações e dossiês\n' +
+        '- Upload de evidências com validação\n' +
+        '- Auditoria completa e logs imutáveis\n' +
+        '- Conformidade LGPD, ISO 27001, ISO 37002\n\n' +
+        '## Segurança\n' +
+        '- TLS 1.3 obrigatório em produção\n' +
+        '- Rate limiting habilitado\n' +
+        '- Criptografia AES-256 para dados sensíveis\n' +
+        '- Tokens JWT com expiração curta',
     )
     .setVersion('1.0.0')
-    .setContact(
-      'Time de Compliance',
-      'https://suaempresa.com',
-      'compliance@suaempresa.com',
-    )
+    .setContact('Time de Compliance', 'https://suaempresa.com', 'compliance@suaempresa.com')
     .addBearerAuth(
       {
         type: 'http',

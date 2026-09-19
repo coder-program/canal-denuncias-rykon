@@ -9,8 +9,8 @@ import { NotFoundException, ForbiddenException } from '@nestjs/common';
 
 describe('ComplaintsService', () => {
   let service: ComplaintsService;
-  let prismaService: PrismaService;
-  let loggerService: LoggerService;
+  let _prismaService: PrismaService;
+  let _loggerService: LoggerService;
 
   const mockPrismaService = {
     complaint: {
@@ -62,8 +62,8 @@ describe('ComplaintsService', () => {
     }).compile();
 
     service = module.get<ComplaintsService>(ComplaintsService);
-    prismaService = module.get<PrismaService>(PrismaService);
-    loggerService = module.get<LoggerService>(LoggerService);
+    _prismaService = module.get<PrismaService>(PrismaService);
+    _loggerService = module.get<LoggerService>(LoggerService);
 
     // Clear all mocks
     jest.clearAllMocks();
