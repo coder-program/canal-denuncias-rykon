@@ -4,7 +4,7 @@ import { PrismaService } from '@shared/prisma/prisma.service';
 import { S3Service } from '@shared/s3/s3.service';
 import { LoggerService } from '@shared/logger/logger.service';
 import { NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
-import { UserRole } from '@prisma/client';
+import { UserRole, Complaint, Attachment, ComplaintStatusHistory, Dossier } from '@prisma/client';
 
 describe('DossiersService', () => {
   let service: DossiersService;
@@ -148,11 +148,15 @@ describe('DossiersService', () => {
     const userRole = UserRole.ADMIN;
 
     beforeEach(() => {
-      prismaService.complaint.findUnique.mockResolvedValue(mockComplaint as any);
-      prismaService.attachment.findMany.mockResolvedValue(mockAttachments as any);
-      prismaService.complaintStatusHistory.findMany.mockResolvedValue(mockStatusHistory as any);
+      prismaService.complaint.findUnique.mockResolvedValue(mockComplaint as unknown as Complaint);
+      prismaService.attachment.findMany.mockResolvedValue(
+        mockAttachments as unknown as Attachment[],
+      );
+      prismaService.complaintStatusHistory.findMany.mockResolvedValue(
+        mockStatusHistory as unknown as ComplaintStatusHistory[],
+      );
       prismaService.auditLog.findMany.mockResolvedValue([]);
-      prismaService.dossier.create.mockResolvedValue(mockDossier as any);
+      prismaService.dossier.create.mockResolvedValue(mockDossier as unknown as Dossier);
 
       s3Service.uploadFile.mockResolvedValue({
         key: 'dossiers/test.pdf',
@@ -208,7 +212,9 @@ describe('DossiersService', () => {
 
     it('deve lançar ForbiddenException se REPORTER tentar acessar denúncia de outro', async () => {
       const reporterComplaint = { ...mockComplaint, createdBy: 'other-user' };
-      prismaService.complaint.findUnique.mockResolvedValue(reporterComplaint as any);
+      prismaService.complaint.findUnique.mockResolvedValue(
+        reporterComplaint as unknown as Complaint,
+      );
 
       await expect(
         service.generateDossier('complaint-123', 'user-reporter', UserRole.REPORTER),
@@ -230,8 +236,8 @@ describe('DossiersService', () => {
 
   describe('findAllByComplaint()', () => {
     it('deve retornar lista de dossiês da denúncia', async () => {
-      prismaService.complaint.findUnique.mockResolvedValue(mockComplaint as any);
-      prismaService.dossier.findMany.mockResolvedValue([mockDossier] as any);
+      prismaService.complaint.findUnique.mockResolvedValue(mockComplaint as unknown as Complaint);
+      prismaService.dossier.findMany.mockResolvedValue([mockDossier] as unknown as Dossier[]);
 
       const result = await service.findAllByComplaint(
         'complaint-123',
@@ -258,7 +264,9 @@ describe('DossiersService', () => {
 
     it('deve lançar ForbiddenException se REPORTER tentar acessar denúncia de outro', async () => {
       const reporterComplaint = { ...mockComplaint, createdBy: 'other-user' };
-      prismaService.complaint.findUnique.mockResolvedValue(reporterComplaint as any);
+      prismaService.complaint.findUnique.mockResolvedValue(
+        reporterComplaint as unknown as Complaint,
+      );
 
       await expect(
         service.findAllByComplaint('complaint-123', 'user-reporter', UserRole.REPORTER),
@@ -268,8 +276,8 @@ describe('DossiersService', () => {
 
   describe('findOne()', () => {
     it('deve retornar dossiê com detalhes completos', async () => {
-      prismaService.dossier.findUnique.mockResolvedValue(mockDossier as any);
-      prismaService.complaint.findUnique.mockResolvedValue(mockComplaint as any);
+      prismaService.dossier.findUnique.mockResolvedValue(mockDossier as unknown as Dossier);
+      prismaService.complaint.findUnique.mockResolvedValue(mockComplaint as unknown as Complaint);
 
       const result = await service.findOne('dossier-123', 'user-admin-123', UserRole.ADMIN);
 
@@ -293,8 +301,10 @@ describe('DossiersService', () => {
     it('deve lançar ForbiddenException se REPORTER tentar acessar dossiê de outro', async () => {
       const reporterComplaint = { ...mockComplaint, createdBy: 'other-user' };
       const dossier = { ...mockDossier, complaint: reporterComplaint };
-      prismaService.dossier.findUnique.mockResolvedValue(dossier as any);
-      prismaService.complaint.findUnique.mockResolvedValue(reporterComplaint as any);
+      prismaService.dossier.findUnique.mockResolvedValue(dossier as unknown as Dossier);
+      prismaService.complaint.findUnique.mockResolvedValue(
+        reporterComplaint as unknown as Complaint,
+      );
 
       await expect(
         service.findOne('dossier-123', 'user-reporter', UserRole.REPORTER),
@@ -304,8 +314,8 @@ describe('DossiersService', () => {
 
   describe('getDownloadUrlPDF()', () => {
     it('deve retornar URL de download do PDF', async () => {
-      prismaService.dossier.findUnique.mockResolvedValue(mockDossier as any);
-      prismaService.complaint.findUnique.mockResolvedValue(mockComplaint as any);
+      prismaService.dossier.findUnique.mockResolvedValue(mockDossier as unknown as Dossier);
+      prismaService.complaint.findUnique.mockResolvedValue(mockComplaint as unknown as Complaint);
       s3Service.getPresignedDownloadUrl.mockResolvedValue('https://s3.amazonaws.com/presigned-url');
 
       const result = await service.getDownloadUrlPDF(
@@ -326,8 +336,8 @@ describe('DossiersService', () => {
 
     it('deve lançar BadRequestException se dossiê não tem PDF', async () => {
       const dossierWithoutPDF = { ...mockDossier, s3PdfKey: null };
-      prismaService.dossier.findUnique.mockResolvedValue(dossierWithoutPDF as any);
-      prismaService.complaint.findUnique.mockResolvedValue(mockComplaint as any);
+      prismaService.dossier.findUnique.mockResolvedValue(dossierWithoutPDF as unknown as Dossier);
+      prismaService.complaint.findUnique.mockResolvedValue(mockComplaint as unknown as Complaint);
 
       await expect(
         service.getDownloadUrlPDF('dossier-123', 'user-admin-123', UserRole.ADMIN),
@@ -335,8 +345,8 @@ describe('DossiersService', () => {
     });
 
     it('deve criar log de auditoria ao gerar URL de download', async () => {
-      prismaService.dossier.findUnique.mockResolvedValue(mockDossier as any);
-      prismaService.complaint.findUnique.mockResolvedValue(mockComplaint as any);
+      prismaService.dossier.findUnique.mockResolvedValue(mockDossier as unknown as Dossier);
+      prismaService.complaint.findUnique.mockResolvedValue(mockComplaint as unknown as Complaint);
       s3Service.getPresignedDownloadUrl.mockResolvedValue('https://s3.amazonaws.com/presigned-url');
 
       await service.getDownloadUrlPDF('dossier-123', 'user-admin-123', UserRole.ADMIN);
@@ -353,8 +363,8 @@ describe('DossiersService', () => {
 
   describe('getDownloadUrlZIP()', () => {
     it('deve retornar URL de download do ZIP', async () => {
-      prismaService.dossier.findUnique.mockResolvedValue(mockDossier as any);
-      prismaService.complaint.findUnique.mockResolvedValue(mockComplaint as any);
+      prismaService.dossier.findUnique.mockResolvedValue(mockDossier as unknown as Dossier);
+      prismaService.complaint.findUnique.mockResolvedValue(mockComplaint as unknown as Complaint);
       s3Service.getPresignedDownloadUrl.mockResolvedValue('https://s3.amazonaws.com/presigned-zip');
 
       const result = await service.getDownloadUrlZIP(
@@ -374,8 +384,8 @@ describe('DossiersService', () => {
 
     it('deve lançar BadRequestException se dossiê não tem ZIP', async () => {
       const dossierWithoutZIP = { ...mockDossier, s3ZipKey: null };
-      prismaService.dossier.findUnique.mockResolvedValue(dossierWithoutZIP as any);
-      prismaService.complaint.findUnique.mockResolvedValue(mockComplaint as any);
+      prismaService.dossier.findUnique.mockResolvedValue(dossierWithoutZIP as unknown as Dossier);
+      prismaService.complaint.findUnique.mockResolvedValue(mockComplaint as unknown as Complaint);
 
       await expect(
         service.getDownloadUrlZIP('dossier-123', 'user-admin-123', UserRole.ADMIN),
@@ -385,8 +395,8 @@ describe('DossiersService', () => {
 
   describe('remove()', () => {
     it('deve remover dossiê e arquivos do S3 (ADMIN)', async () => {
-      prismaService.dossier.findUnique.mockResolvedValue(mockDossier as any);
-      prismaService.complaint.findUnique.mockResolvedValue(mockComplaint as any);
+      prismaService.dossier.findUnique.mockResolvedValue(mockDossier as unknown as Dossier);
+      prismaService.complaint.findUnique.mockResolvedValue(mockComplaint as unknown as Complaint);
 
       await service.remove('dossier-123', 'user-admin-123', UserRole.ADMIN);
 
@@ -405,8 +415,8 @@ describe('DossiersService', () => {
     });
 
     it('deve criar log de auditoria após remover dossiê', async () => {
-      prismaService.dossier.findUnique.mockResolvedValue(mockDossier as any);
-      prismaService.complaint.findUnique.mockResolvedValue(mockComplaint as any);
+      prismaService.dossier.findUnique.mockResolvedValue(mockDossier as unknown as Dossier);
+      prismaService.complaint.findUnique.mockResolvedValue(mockComplaint as unknown as Complaint);
 
       await service.remove('dossier-123', 'user-admin-123', UserRole.ADMIN);
 
@@ -426,8 +436,8 @@ describe('DossiersService', () => {
       prismaService.dossier.groupBy.mockResolvedValue([
         { generatedBy: 'user-1', _count: { id: 10 } },
         { generatedBy: 'user-2', _count: { id: 8 } },
-      ] as any);
-      prismaService.dossier.findMany.mockResolvedValue([mockDossier] as any);
+      ] as unknown as Array<{ generatedBy: string; _count: { id: number } }>);
+      prismaService.dossier.findMany.mockResolvedValue([mockDossier] as unknown as Dossier[]);
 
       const result = await service.getStats();
 

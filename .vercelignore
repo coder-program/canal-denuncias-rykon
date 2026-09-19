@@ -1,0 +1,12 @@
+# Reduce upload size for the Vercel project (frontend-only deployment).
+# Only root-level clutter is excluded here — nothing inside apps/** is touched,
+# so npm workspace install (root package.json -> apps/*) still works normally.
+
+/*.md
+/*.txt
+/docs/
+/scripts/
+/k8s/
+/*.ps1
+/*.bat
+/docker-compose*.yml

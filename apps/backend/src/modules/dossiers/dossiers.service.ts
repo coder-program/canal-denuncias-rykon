@@ -19,6 +19,11 @@ interface DossierGenerationOptions {
   format: 'pdf' | 'zip' | 'both';
 }
 
+type ValidatedComplaint = NonNullable<
+  Awaited<ReturnType<DossiersService['validateComplaintAccess']>>
+>;
+type ComplaintFullData = Awaited<ReturnType<DossiersService['getComplaintFullData']>>;
+
 @Injectable()
 export class DossiersService {
   constructor(
@@ -355,8 +360,8 @@ export class DossiersService {
   // ============================================
 
   private async generatePDF(
-    complaint: any,
-    data: any,
+    complaint: ValidatedComplaint,
+    data: ComplaintFullData,
     options: DossierGenerationOptions,
   ): Promise<string> {
     const doc = new PDFDocument({
@@ -415,14 +420,14 @@ export class DossiersService {
         originalname: `dossier-${complaint.protocol}.pdf`,
         mimetype: 'application/pdf',
         size: pdfBuffer.length,
-      } as any,
+      } as Express.Multer.File,
       'dossiers',
     );
 
     return uploadResult.key;
   }
 
-  private addPDFHeader(doc: PDFKit.PDFDocument, complaint: any) {
+  private addPDFHeader(doc: PDFKit.PDFDocument, complaint: ValidatedComplaint) {
     doc
       .fontSize(20)
       .font('Helvetica-Bold')
@@ -453,7 +458,11 @@ export class DossiersService {
       .moveDown(1.5);
   }
 
-  private addPDFSummary(doc: PDFKit.PDFDocument, complaint: any, data: any) {
+  private addPDFSummary(
+    doc: PDFKit.PDFDocument,
+    complaint: ValidatedComplaint,
+    data: ComplaintFullData,
+  ) {
     doc
       .fontSize(12)
       .font('Helvetica-Bold')
@@ -492,7 +501,10 @@ export class DossiersService {
     }
   }
 
-  private addPDFTimeline(doc: PDFKit.PDFDocument, statusHistory: any[]) {
+  private addPDFTimeline(
+    doc: PDFKit.PDFDocument,
+    statusHistory: ComplaintFullData['statusHistory'],
+  ) {
     doc
       .fontSize(12)
       .font('Helvetica-Bold')
@@ -519,7 +531,10 @@ export class DossiersService {
     doc.moveDown(1.5);
   }
 
-  private addPDFAttachmentsList(doc: PDFKit.PDFDocument, attachments: any[]) {
+  private addPDFAttachmentsList(
+    doc: PDFKit.PDFDocument,
+    attachments: ComplaintFullData['attachments'],
+  ) {
     doc
       .fontSize(12)
       .font('Helvetica-Bold')
@@ -542,7 +557,7 @@ export class DossiersService {
     doc.moveDown(1);
   }
 
-  private addPDFAuditLog(doc: PDFKit.PDFDocument, auditLogs: any[]) {
+  private addPDFAuditLog(doc: PDFKit.PDFDocument, auditLogs: ComplaintFullData['auditLogs']) {
     doc.addPage();
 
     doc
@@ -588,8 +603,8 @@ export class DossiersService {
   // ============================================
 
   private async generateZIP(
-    complaint: any,
-    data: any,
+    complaint: ValidatedComplaint,
+    data: ComplaintFullData,
     pdfKey: string | null,
     options: DossierGenerationOptions,
   ): Promise<string> {
@@ -642,14 +657,14 @@ export class DossiersService {
         originalname: `dossier-${complaint.protocol}.zip`,
         mimetype: 'application/zip',
         size: zipBuffer.length,
-      } as any,
+      } as Express.Multer.File,
       'dossiers',
     );
 
     return uploadResult.key;
   }
 
-  private generateReadmeContent(complaint: any, data: any): string {
+  private generateReadmeContent(complaint: ValidatedComplaint, data: ComplaintFullData): string {
     return `
 ╔════════════════════════════════════════════════════════════════╗
 ║           DOSSIÊ DE INVESTIGAÇÃO - CANAL DE DENÚNCIAS         ║
@@ -747,7 +762,7 @@ Sistema: Canal de Denúncias Corporativo v1.2.0
     };
   }
 
-  private generateSummaryText(complaint: any, data: any): string {
+  private generateSummaryText(complaint: ValidatedComplaint, data: ComplaintFullData): string {
     return `
 Dossiê gerado para denúncia ${complaint.protocol}.
 Tipo: ${this.translateComplaintType(complaint.type)}.

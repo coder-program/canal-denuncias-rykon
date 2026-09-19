@@ -30,6 +30,7 @@ import { JwtAuthGuard } from '@modules/auth/guards/jwt-auth.guard';
 import { RolesGuard } from '@modules/auth/guards/roles.guard';
 import { Roles } from '@modules/auth/decorators/roles.decorator';
 import { UserRole } from '@prisma/client';
+import { RequestWithUser } from '@shared/types/express-request.interface';
 
 @ApiTags('Attachments')
 @Controller('attachments')
@@ -89,7 +90,7 @@ export class AttachmentsController {
   async uploadFile(
     @UploadedFile() file: Express.Multer.File,
     @Param('complaintId') complaintId: string,
-    @Request() req: any,
+    @Request() req: RequestWithUser,
   ) {
     console.log('=== UPLOAD ENDPOINT CALLED ===');
     console.log('File received:', file ? `${file.originalname} (${file.size} bytes)` : 'NO FILE');
@@ -145,7 +146,10 @@ export class AttachmentsController {
     },
   })
   @ApiResponse({ status: 404, description: 'Denúncia não encontrada' })
-  async findAllByComplaint(@Param('complaintId') complaintId: string, @Request() req: any) {
+  async findAllByComplaint(
+    @Param('complaintId') complaintId: string,
+    @Request() req: RequestWithUser,
+  ) {
     return this.attachmentsService.findAllByComplaint(complaintId, req.user.id, req.user.role);
   }
 
@@ -210,7 +214,7 @@ export class AttachmentsController {
     description: 'Detalhes do anexo',
   })
   @ApiResponse({ status: 404, description: 'Anexo não encontrado' })
-  async findOne(@Param('id') id: string, @Request() req: any) {
+  async findOne(@Param('id') id: string, @Request() req: RequestWithUser) {
     return this.attachmentsService.findOne(id, req.user.id, req.user.role);
   }
 
@@ -252,7 +256,7 @@ export class AttachmentsController {
   async getDownloadUrl(
     @Param('id') id: string,
     @Query('expiresIn', new ParseIntPipe({ optional: true })) expiresIn: number = 3600,
-    @Request() req: any,
+    @Request() req: RequestWithUser,
   ) {
     return this.attachmentsService.getDownloadUrl(id, req.user.id, req.user.role, expiresIn);
   }
@@ -287,7 +291,7 @@ export class AttachmentsController {
     },
   })
   @ApiResponse({ status: 404, description: 'Anexo não encontrado' })
-  async verifyIntegrity(@Param('id') id: string, @Request() req: any) {
+  async verifyIntegrity(@Param('id') id: string, @Request() req: RequestWithUser) {
     return this.attachmentsService.verifyIntegrity(id, req.user.id, req.user.role);
   }
 
@@ -318,7 +322,7 @@ export class AttachmentsController {
   })
   @ApiResponse({ status: 404, description: 'Anexo não encontrado' })
   @ApiResponse({ status: 403, description: 'Sem permissão' })
-  async remove(@Param('id') id: string, @Request() req: any) {
+  async remove(@Param('id') id: string, @Request() req: RequestWithUser) {
     return this.attachmentsService.remove(id, req.user.id, req.user.role);
   }
 }

@@ -5,7 +5,14 @@ import { LoggerService } from '@shared/logger/logger.service';
 import { CreateComplaintDto } from './dto/create-complaint.dto';
 import { UpdateComplaintDto } from './dto/update-complaint.dto';
 import { QueryComplaintsDto } from './dto/query-complaints.dto';
-import { ComplaintStatus, ComplaintType, UserRole, Prisma } from '@prisma/client';
+import {
+  ComplaintStatus,
+  ComplaintType,
+  UserRole,
+  Prisma,
+  NotificationType,
+  NotificationChannel,
+} from '@prisma/client';
 import { nanoid } from 'nanoid';
 import * as crypto from 'crypto';
 
@@ -41,9 +48,9 @@ export class ComplaintsService {
       console.log('[ComplaintsService] Generated protocol:', protocol);
 
       // Normalizar involvedPeople para array se necessário
-      let involvedPeople = createComplaintDto.involvedPeople;
+      let involvedPeople: string[] | undefined = createComplaintDto.involvedPeople;
       if (involvedPeople && !Array.isArray(involvedPeople)) {
-        involvedPeople = [involvedPeople] as any;
+        involvedPeople = [involvedPeople as unknown as string];
       }
 
       // Criptografar dados sensíveis se necessário
@@ -416,8 +423,8 @@ export class ComplaintsService {
         userId: investigatorId,
         relatedId: complaintId,
         relatedType: 'complaint',
-        type: 'COMPLAINT_ASSIGNED' as any,
-        channel: 'IN_APP' as any,
+        type: 'COMPLAINT_ASSIGNED' as NotificationType,
+        channel: 'IN_APP' as NotificationChannel,
         title: 'Nova denúncia atribuída',
         message: `Você foi atribuído à denúncia ${complaint.protocol}`,
       },
@@ -485,8 +492,8 @@ export class ComplaintsService {
           userId: complaint.createdBy,
           relatedId: complaintId,
           relatedType: 'complaint',
-          type: 'COMPLAINT_STATUS_CHANGED' as any,
-          channel: 'IN_APP' as any,
+          type: 'COMPLAINT_STATUS_CHANGED' as NotificationType,
+          channel: 'IN_APP' as NotificationChannel,
           title: 'Status da denúncia atualizado',
           message: `Sua denúncia ${complaint.protocol} teve o status alterado para ${newStatus}`,
         },
@@ -552,8 +559,8 @@ export class ComplaintsService {
   /**
    * Criptografar dados sensíveis (PII) usando AES-256-CBC
    */
-  private encryptSensitiveData(data: any): any {
-    const encrypted: any = {};
+  private encryptSensitiveData(data: Record<string, string | null>): Record<string, string | null> {
+    const encrypted: Record<string, string | null> = {};
 
     for (const [key, value] of Object.entries(data)) {
       if (value === null || value === undefined) {
@@ -621,7 +628,7 @@ export class ComplaintsService {
   /**
    * Calcular hash de integridade
    */
-  private calculateIntegrityHash(data: any): string {
+  private calculateIntegrityHash(data: Record<string, unknown>): string {
     const content = JSON.stringify(data);
     return crypto.createHash('sha256').update(content).digest('hex');
   }
@@ -629,7 +636,7 @@ export class ComplaintsService {
   /**
    * Sanitizar dados sensíveis antes de retornar
    */
-  private sanitizeComplaint(complaint: any): any {
+  private sanitizeComplaint<T extends Record<string, unknown>>(complaint: T): T {
     // Se for anônima, não expor dados do criador
     if (complaint.isAnonymous) {
       delete complaint.createdBy;
@@ -644,7 +651,7 @@ export class ComplaintsService {
   /**
    * Notificar novos admins/investigadores sobre nova denúncia
    */
-  private async notifyNewComplaint(complaint: any) {
+  private async notifyNewComplaint(complaint: { id: string; protocol: string; type: string }) {
     // Buscar todos os ADMIN e INVESTIGATOR
     const usersToNotify = await this.prisma.user.findMany({
       where: {
@@ -657,12 +664,12 @@ export class ComplaintsService {
     });
 
     // Criar notificações
-    const notifications = usersToNotify.map((user: any) => ({
+    const notifications = usersToNotify.map((user) => ({
       userId: user.id,
       relatedId: complaint.id,
       relatedType: 'complaint',
-      type: 'COMPLAINT_CREATED' as any,
-      channel: 'IN_APP' as any,
+      type: 'COMPLAINT_CREATED' as NotificationType,
+      channel: 'IN_APP' as NotificationChannel,
       title: 'Nova denúncia recebida',
       message: `Denúncia ${complaint.protocol} (${complaint.type}) aguardando triagem`,
     }));
@@ -757,14 +764,14 @@ export class ComplaintsService {
         resolved,
       },
       byType: byType.reduce(
-        (acc: any, item: any) => {
+        (acc, item) => {
           acc[item.type] = item._count;
           return acc;
         },
         {} as Record<string, number>,
       ),
       byPriority: byPriority.reduce(
-        (acc: any, item: any) => {
+        (acc, item) => {
           acc[item.priority] = item._count;
           return acc;
         },

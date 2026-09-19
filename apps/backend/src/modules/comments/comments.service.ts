@@ -3,7 +3,14 @@ import { PrismaService } from '@shared/prisma/prisma.service';
 import { LoggerService } from '@shared/logger/logger.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
-import { UserRole } from '@prisma/client';
+import { Prisma, UserRole } from '@prisma/client';
+
+interface ComplaintNotificationContext {
+  id: string;
+  createdBy: string | null;
+  investigatorId: string | null;
+  protocol: string;
+}
 
 @Injectable()
 export class CommentsService {
@@ -254,9 +261,13 @@ export class CommentsService {
   /**
    * Enviar notificações sobre novo comentário
    */
-  private async notifyNewComment(complaint: any, comment: any, authorId: string) {
+  private async notifyNewComment(
+    complaint: ComplaintNotificationContext,
+    comment: unknown,
+    authorId: string,
+  ) {
     // Notificar criador da denúncia (se não for anônimo e não for o autor do comentário)
-    const notifications: any[] = [];
+    const notifications: Prisma.NotificationCreateManyInput[] = [];
 
     if (complaint.createdBy && complaint.createdBy !== authorId) {
       notifications.push({

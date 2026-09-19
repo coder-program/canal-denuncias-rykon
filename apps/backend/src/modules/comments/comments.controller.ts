@@ -19,6 +19,7 @@ import { JwtAuthGuard } from '@modules/auth/guards/jwt-auth.guard';
 import { RolesGuard } from '@modules/auth/guards/roles.guard';
 import { Roles } from '@modules/auth/decorators/roles.decorator';
 import { UserRole } from '@prisma/client';
+import { RequestWithUser } from '@shared/types/express-request.interface';
 
 @ApiTags('Comments')
 @Controller('complaints/:complaintId/comments')
@@ -44,7 +45,7 @@ export class CommentsController {
   async create(
     @Param('complaintId') complaintId: string,
     @Body() createCommentDto: CreateCommentDto,
-    @Request() req: any,
+    @Request() req: RequestWithUser,
   ) {
     return this.commentsService.create(complaintId, createCommentDto, req.user.id, req.user.role);
   }
@@ -63,7 +64,7 @@ export class CommentsController {
   @ApiResponse({ status: 200, description: 'Lista de comentários retornada com sucesso' })
   @ApiResponse({ status: 403, description: 'Sem permissão para ver comentários desta denúncia' })
   @ApiResponse({ status: 404, description: 'Denúncia não encontrada' })
-  async findAll(@Param('complaintId') complaintId: string, @Request() req: any) {
+  async findAll(@Param('complaintId') complaintId: string, @Request() req: RequestWithUser) {
     return this.commentsService.findAllByComplaint(complaintId, req.user.id, req.user.role);
   }
 
@@ -78,7 +79,7 @@ export class CommentsController {
   @ApiResponse({ status: 200, description: 'Comentário retornado com sucesso' })
   @ApiResponse({ status: 403, description: 'Sem permissão para ver este comentário' })
   @ApiResponse({ status: 404, description: 'Comentário não encontrado' })
-  async findOne(@Param('id') id: string, @Request() req: any) {
+  async findOne(@Param('id') id: string, @Request() req: RequestWithUser) {
     return this.commentsService.findOne(id, req.user.id, req.user.role);
   }
 
@@ -100,7 +101,7 @@ export class CommentsController {
   async update(
     @Param('id') id: string,
     @Body() updateCommentDto: UpdateCommentDto,
-    @Request() req: any,
+    @Request() req: RequestWithUser,
   ) {
     return this.commentsService.update(id, updateCommentDto, req.user.id, req.user.role);
   }
@@ -121,7 +122,7 @@ export class CommentsController {
   @ApiResponse({ status: 204, description: 'Comentário deletado com sucesso' })
   @ApiResponse({ status: 403, description: 'Sem permissão para deletar este comentário' })
   @ApiResponse({ status: 404, description: 'Comentário não encontrado' })
-  async remove(@Param('id') id: string, @Request() req: any) {
+  async remove(@Param('id') id: string, @Request() req: RequestWithUser) {
     return this.commentsService.remove(id, req.user.id, req.user.role);
   }
 }

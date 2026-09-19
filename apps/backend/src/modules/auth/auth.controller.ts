@@ -2,7 +2,7 @@ import { Controller, Post, Body, HttpCode, HttpStatus, UseGuards, Req, Get } fro
 import { AuthGuard } from '@nestjs/passport';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { Request } from 'express';
-import { AuthService } from './auth.service';
+import { AuthService, AuthenticatedUser } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
@@ -132,7 +132,7 @@ export class AuthController {
   })
   @ApiResponse({ status: 200, description: 'Logout realizado com sucesso' })
   @ApiResponse({ status: 401, description: 'Não autenticado' })
-  async logout(@Body() refreshTokenDto: RefreshTokenDto, @CurrentUser() user: any) {
+  async logout(@Body() refreshTokenDto: RefreshTokenDto, @CurrentUser() user: AuthenticatedUser) {
     await this.authService.logout(refreshTokenDto.refreshToken, user.id);
     return { message: 'Logout realizado com sucesso' };
   }
@@ -163,7 +163,7 @@ export class AuthController {
     },
   })
   @ApiResponse({ status: 401, description: 'Não autenticado' })
-  async getProfile(@CurrentUser() user: any) {
+  async getProfile(@CurrentUser() user: AuthenticatedUser) {
     return user;
   }
 }

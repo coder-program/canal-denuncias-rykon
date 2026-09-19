@@ -49,8 +49,18 @@ async function bootstrap() {
   // ====================================
   // CORS
   // ====================================
+  // CORS_ORIGIN aceita uma ou mais origens separadas por vírgula, ex.:
+  // "https://app.suaempresa.com,https://seu-projeto.vercel.app"
+  // (útil para permitir tanto o domínio de produção quanto os deploys
+  // de preview do Vercel ao mesmo tempo).
+  const corsOrigins = configService
+    .get<string>('CORS_ORIGIN', 'http://localhost:3001')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+
   app.enableCors({
-    origin: configService.get<string>('CORS_ORIGIN', 'http://localhost:3001'),
+    origin: corsOrigins,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],

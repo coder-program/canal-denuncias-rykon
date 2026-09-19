@@ -7,7 +7,9 @@ import { LoggerService } from '@shared/logger/logger.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
-import { UserRole } from '@prisma/client';
+import { User, UserRole } from '@prisma/client';
+
+export type AuthenticatedUser = Omit<User, 'passwordHash'>;
 
 export interface JwtPayload {
   sub: string;
@@ -47,7 +49,7 @@ export class AuthService {
   /**
    * Validar credenciais do usuário (usado pelo LocalStrategy)
    */
-  async validateUser(email: string, password: string): Promise<any> {
+  async validateUser(email: string, password: string): Promise<AuthenticatedUser> {
     const user = await this.prisma.user.findUnique({
       where: { email },
     });
@@ -293,7 +295,7 @@ export class AuthService {
    * Gerar access token e refresh token
    */
   private async generateTokens(
-    user: any,
+    user: AuthenticatedUser,
     ipAddress?: string,
     userAgent?: string,
   ): Promise<AuthTokens> {

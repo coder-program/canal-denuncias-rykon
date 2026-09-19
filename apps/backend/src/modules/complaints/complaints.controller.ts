@@ -23,6 +23,7 @@ import { JwtAuthGuard } from '@modules/auth/guards/jwt-auth.guard';
 import { RolesGuard } from '@modules/auth/guards/roles.guard';
 import { Roles } from '@modules/auth/decorators/roles.decorator';
 import { UserRole } from '@prisma/client';
+import { RequestWithUser, OptionalAuthRequest } from '@shared/types/express-request.interface';
 
 @ApiTags('Complaints')
 @Controller('complaints')
@@ -55,7 +56,10 @@ export class ComplaintsController {
     },
   })
   @ApiResponse({ status: 400, description: 'Dados inválidos' })
-  async create(@Body() createComplaintDto: CreateComplaintDto, @Request() req?: any) {
+  async create(
+    @Body() createComplaintDto: CreateComplaintDto,
+    @Request() req?: OptionalAuthRequest,
+  ) {
     console.log('[ComplaintsController] POST /complaints called');
     console.log(
       '[ComplaintsController] Request body:',
@@ -108,7 +112,7 @@ export class ComplaintsController {
   })
   @ApiResponse({ status: 401, description: 'Não autenticado' })
   @ApiResponse({ status: 403, description: 'Sem permissão' })
-  async findAll(@Query() query: QueryComplaintsDto, @Request() req: any) {
+  async findAll(@Query() query: QueryComplaintsDto, @Request() req: RequestWithUser) {
     return this.complaintsService.findAll(query, req.user.role, req.user.id);
   }
 
@@ -206,7 +210,7 @@ export class ComplaintsController {
   })
   @ApiResponse({ status: 404, description: 'Denúncia não encontrada' })
   @ApiResponse({ status: 403, description: 'Sem permissão para visualizar' })
-  async findOne(@Param('id') id: string, @Request() req: any) {
+  async findOne(@Param('id') id: string, @Request() req: RequestWithUser) {
     return this.complaintsService.findOne(id, req.user.role, req.user.id);
   }
 
@@ -232,7 +236,7 @@ export class ComplaintsController {
   async update(
     @Param('id') id: string,
     @Body() updateComplaintDto: UpdateComplaintDto,
-    @Request() req: any,
+    @Request() req: RequestWithUser,
   ) {
     return this.complaintsService.update(id, updateComplaintDto, req.user.id, req.user.role);
   }
@@ -263,7 +267,7 @@ export class ComplaintsController {
   async assignInvestigator(
     @Param('id') id: string,
     @Param('investigatorId') investigatorId: string,
-    @Request() req: any,
+    @Request() req: RequestWithUser,
   ) {
     return this.complaintsService.assignInvestigator(id, investigatorId, req.user.id);
   }
@@ -289,7 +293,7 @@ export class ComplaintsController {
   async changeStatus(
     @Param('id') id: string,
     @Body() changeStatusDto: ChangeStatusDto,
-    @Request() req: any,
+    @Request() req: RequestWithUser,
   ) {
     return this.complaintsService.changeStatus(
       id,
@@ -317,7 +321,7 @@ export class ComplaintsController {
   })
   @ApiResponse({ status: 200, description: 'Denúncia arquivada' })
   @ApiResponse({ status: 404, description: 'Denúncia não encontrada' })
-  async remove(@Param('id') id: string, @Request() req: any) {
+  async remove(@Param('id') id: string, @Request() req: RequestWithUser) {
     return this.complaintsService.remove(id, req.user.id);
   }
 
@@ -342,7 +346,7 @@ export class ComplaintsController {
   async addComment(
     @Param('id') id: string,
     @Body() createCommentDto: CreateCommentDto,
-    @Request() req: any,
+    @Request() req: RequestWithUser,
   ) {
     return this.complaintsService.addComment(id, createCommentDto.content, req.user.id);
   }
