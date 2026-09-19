@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
   CheckCircle2,
@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 
-export default function DenunciaConfirmadaPage() {
+function DenunciaConfirmadaContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const protocol = searchParams?.get('protocol') || null;
@@ -295,5 +295,13 @@ export default function DenunciaConfirmadaPage() {
         }
       `}</style>
     </div>
+  );
+}
+
+export default function DenunciaConfirmadaPage() {
+  return (
+    <Suspense fallback={null}>
+      <DenunciaConfirmadaContent />
+    </Suspense>
   );
 }

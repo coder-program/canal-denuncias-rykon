@@ -7,14 +7,15 @@ export default async function TenantLayout({
   children,
   params,
 }: {
-  children: React.Node;
-  params: { tenant: string };
+  children: React.ReactNode;
+  params: Promise<{ tenant: string }>;
 }) {
   // Busca dados do tenant e branding
   let tenantData;
+  const { tenant: tenantSlug } = await params;
 
   try {
-    tenantData = await brandingService.getBySlug(params.tenant);
+    tenantData = await brandingService.getBySlug(tenantSlug);
   } catch (error) {
     notFound();
   }

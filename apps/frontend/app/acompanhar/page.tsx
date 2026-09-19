@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
@@ -103,7 +103,7 @@ const statusConfig = {
   },
 };
 
-export default function AcompanharDenuncia() {
+function AcompanharDenunciaContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [protocol, setProtocol] = useState(searchParams?.get('protocol') || '');
@@ -510,5 +510,13 @@ export default function AcompanharDenuncia() {
         }
       `}</style>
     </div>
+  );
+}
+
+export default function AcompanharDenuncia() {
+  return (
+    <Suspense fallback={null}>
+      <AcompanharDenunciaContent />
+    </Suspense>
   );
 }

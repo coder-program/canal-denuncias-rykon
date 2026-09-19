@@ -28,7 +28,7 @@ export function useComplaints(params?: QueryComplaintsParams) {
 
   return {
     complaints: data?.data || [],
-    meta: data?.meta,
+    meta: data?.pagination,
     loading,
     error,
     refetch: fetchComplaints,

@@ -71,7 +71,9 @@ export default function Home() {
     },
   ];
 
-  const [documents, setDocuments] = useState<typeof documentTemplates>([]);
+  const [documents, setDocuments] = useState<
+    Array<(typeof documentTemplates)[number] & { file: string }>
+  >([]);
 
   useEffect(() => {
     loadSettings();
@@ -440,9 +442,7 @@ export default function Home() {
               </div>
             </div>
             <div className="text-center md:text-right">
-              <p className="text-sm text-slate-600">
-                © 2026 Todos os direitos reservados a OuviOn
-              </p>
+              <p className="text-sm text-slate-600">© 2026 Todos os direitos reservados a OuviOn</p>
               <p className="text-xs text-slate-500">Desenvolvido com segurança e conformidade</p>
             </div>
           </div>

@@ -126,8 +126,8 @@ export class AuthService {
   ): Promise<AuthResponse> {
     const user = await this.validateUser(loginDto.email, loginDto.password);
 
-    // Validar se é SUPER_ADMIN
-    if (user.role !== UserRole.SUPER_ADMIN) {
+    // Validar se é ADMIN
+    if (user.role !== UserRole.ADMIN) {
       this.loggerService.warn(
         `Unauthorized admin login attempt by non-SUPER_ADMIN user: ${user.email}`,
         'AuthService',

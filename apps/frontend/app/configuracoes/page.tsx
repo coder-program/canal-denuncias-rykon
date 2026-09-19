@@ -615,8 +615,8 @@ export default function SettingsPage() {
                           online
                         </li>
                         <li>
-                          📤 <strong>Fazer Upload:</strong> Clique em "Upload PDF" para carregar
-                          arquivo do seu computador (máx. 10MB)
+                          📤 <strong>Fazer Upload:</strong> Clique em &quot;Upload PDF&quot; para
+                          carregar arquivo do seu computador (máx. 10MB)
                         </li>
                       </ul>
 

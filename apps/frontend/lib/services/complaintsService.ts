@@ -11,6 +11,7 @@ export interface CreateComplaintRequest {
   priority?: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
   title: string;
   description: string;
+  department?: string;
   location?: string;
   incidentDate?: string | Date;
   involvedPeople?: string | string[];

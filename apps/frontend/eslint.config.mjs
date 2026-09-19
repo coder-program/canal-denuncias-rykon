@@ -12,7 +12,13 @@ const compat = new FlatCompat({
 const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
   {
-    ignores: [".next/**", "node_modules/**", "out/**", "public/**"],
+    ignores: [".next/**", "node_modules/**", "out/**", "public/**", "next-env.d.ts"],
+  },
+  {
+    rules: {
+      // Align with backend convention: allow `any` as a warning, not a hard error.
+      "@typescript-eslint/no-explicit-any": "warn",
+    },
   },
 ];
 
